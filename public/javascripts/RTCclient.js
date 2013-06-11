@@ -99,7 +99,7 @@ function RTCclient () {
   var self = this;
   self.mode = ['Watch', 'Stream'];
   self.chosenMode = ko.observable();  
-  self.availablePeers = ko.observableArray([]);
+  self.availableStreams = ko.observableArray([]);
   this.config = {
     url: 'http://54.214.218.3:3000',
     peerConnectionConfig: {
@@ -133,12 +133,12 @@ function RTCclient () {
   this.connection = io.connect(this.config.url);
   
   this.connection.on('message', function (message) {
-      var peerId = self.getPeerById(message.from);
-      if (peerId === -1) {
-        var peer = new RTCconnection(message.from, self);
-        self.availablePeers().push(peer);
+      var streamId = self.getStreamById(message.from);
+      if (streamId === -1) {
+        var stream = new RTCconnection(message.from, self);
+        self.availableStreams().push(peer);
       } else {
-        peer = self.availablePeers()[peerId];
+        peer = self.availableStreams()[peerId];
       }
       peer.handleMessage(message);
   });
@@ -147,9 +147,9 @@ function RTCclient () {
     self.joinRoom('sRoom');
   });
   
-  this.getPeerById = function(id) {
-    for(var i=0; i<self.availablePeers().length;i++) {
-      if (self.availablePeers()[i].id === id) {return i;}
+  this.getStreamById = function(id) {
+    for(var i=0; i<self.availableStreams().length;i++) {
+      if (self.availableStreams()[i].id === id) {return i;}
     }
     return -1;
   };
@@ -192,7 +192,7 @@ function RTCclient () {
   this.goToMode = function(mode) {
     if(mode === 'Stream') {
       if(self.chosenMode() === 'Watch') {
-        self.availablePeers().forEach(
+        self.availableStreams().forEach(
           function(stream) {
             if(stream.state() === 'Playing') {self.stopStream(stream);}
           }
@@ -202,11 +202,11 @@ function RTCclient () {
       self.startLocalVideo();
     } else {
       // Load initial state from server
-      $.getJSON("/peers", function(allData) {
-        var mappedPeers = $.map(allData, function(data) { 
+      $.getJSON("/streams", function(allData) {
+        var mappedStreams = $.map(allData, function(data) { 
           return new RTCconnection(data.id, self);
         });
-        self.availablePeers(mappedPeers);
+        self.availableStreams(mappedStreams);
       }); 
       if(self.chosenMode() === 'Stream') {
         self.stopLocalVideo();
