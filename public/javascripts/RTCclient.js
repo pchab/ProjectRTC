@@ -112,7 +112,7 @@ function RTCclient () {
       audio:true,
       video: {
         mandatory: {
-          maxHeight: 240
+          maxHeight: 240,
           maxWidth: 320
         },
         optional: []
