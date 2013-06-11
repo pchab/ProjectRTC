@@ -53,7 +53,7 @@ io.sockets.on('connection', function(client) {
     
     console.log('-- ' + client.id + ' joined ' + name + ' --');
     if (name === 'sRoom') {
-      routes.addStream(client.id);
+      routes.addPeer(client.id);
     }
     client.join(name);
   });
@@ -65,7 +65,7 @@ io.sockets.on('connection', function(client) {
 
   function leave() {
     console.log('-- ' + client.id + ' leaved --');
-    routes.removeStream(client.id);
+    routes.removePeer(client.id);
   }
 
   client.on('disconnect', leave);

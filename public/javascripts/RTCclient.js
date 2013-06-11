@@ -28,14 +28,14 @@ function RTCconnection(id, parent) {
         self.initPeerConnection();
         break;
     case 'candidate':
-      if(self.pc.remoteDescription) {
-        this.pc.addIceCandidate(new RTCIceCandidate({
+        if(self.pc.remoteDescription) {
+          this.pc.addIceCandidate(new RTCIceCandidate({
             sdpMLineIndex: message.payload.label,
             candidate: message.payload.candidate
-          })
-        );
-      }
-      break;
+            })
+          );
+        }
+        break;
     }
   };
   
