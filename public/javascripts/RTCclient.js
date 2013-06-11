@@ -134,12 +134,12 @@ function RTCclient () {
   this.connection = io.connect(this.config.url);
   
   this.connection.on('message', function (message) {
-      var peerId = self.getConnectionById(message.from);
+      var peerId = self.getPeerById(message.from);
       if (peerId === -1) {
         var peer = new RTCconnection(message.from, self);
-        self.availableConnections().push(peer);
+        self.availablePeers().push(peer);
       } else {
-        peer = self.availableConnections()[peerId];
+        peer = self.availablePeers()[peerId];
       }
       peer.handleMessage(message);
   });
