@@ -27,8 +27,7 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-// routing
-app.get('/', routes.index); 
+app.get('/', routes.index);
 app.get('/peers', routes.peers);
 
 server.listen(app.get('port'), function(){
@@ -40,17 +39,14 @@ io.sockets.on('connection', function(client) {
    	
   // pass a message
   client.on('message', function (details) {
-    var otherClient = io.sockets.sockets[routes.getNextNode(details.to)];
+    var otherClient = io.sockets.sockets[details.to];
 
     if (!otherClient) {
       return;
     }
+      delete details.to;
       details.from = client.id;
       otherClient.emit('message', details);
-  });
-  
-  client.on('complete', function(seed) {
-    routes.addNode(client.id, seed);
   });
 
   client.on('join', function(name) {

@@ -10,7 +10,7 @@ function RTCconnection(id, parent) {
     console.log('receiving ' + message.type + ' from ' + message.from);
     switch (message.type) {
     case 'offer':
-        self.pc.addStream(parent.getStream(message.to));
+        self.pc.addStream(parent.localStream);
         this.pc.setRemoteDescription(new RTCSessionDescription(message.payload));
         this.answer();
         break;
@@ -39,7 +39,7 @@ function RTCconnection(id, parent) {
   };
   
   this.initPeerConnection = function() {
-    self.pc = new RTCPeerConnection(parent.config.peerConnectionConfig, parent.config.peerConnectionConstraints);
+    self.pc = new RTCPeerConnection(self.parent.config.peerConnectionConfig, self.parent.config.peerConnectionConstraints);
     self.pc.onicecandidate = function(event) {
       if (event.candidate) {
         self.send('candidate', {
@@ -54,7 +54,6 @@ function RTCconnection(id, parent) {
       parent.remoteVideosContainer.appendChild(self.remoteVideoEl);
       attachMediaStream(self.remoteVideoEl, event.stream);
       self.remoteVideoEl.controls = 'controls';
-      self.parent.connection.emit('complete', self.id);
     };
   };
   
@@ -100,7 +99,7 @@ function RTCclient () {
   var self = this;
   self.mode = ['Watch', 'Stream'];
   self.chosenMode = ko.observable();  
-  self.availableStreams = ko.observableArray([]);
+  self.availablePeers = ko.observableArray([]);
   this.config = {
     url: 'http://54.214.218.3:3000',
     peerConnectionConfig: {
@@ -131,34 +130,26 @@ function RTCclient () {
   this.localVideoEl = document.getElementById('localVideo');
   this.remoteVideosContainer = document.getElementById('remoteVideosContainer');
   
-  this.getStream = function(id){
-    var StreamId = self.getStreamById(id);
-    if (StreamId === -1) {
-      return self.localStream;
-    } 
-    return self.availableStreams()[peerId].getRemoteStreams()[0];
-  }
-  
   this.connection = io.connect(this.config.url);
   
   this.connection.on('message', function (message) {
-      var streamId = self.getStreamById(message.from);
-      if (streamId === -1) {
-        var stream = new RTCconnection(message.from, self);
-        self.availableStreams().push(stream);
+      var peerId = self.getPeerById(message.from);
+      if (peerId === -1) {
+        var peer = new RTCconnection(message.from, self);
+        self.availablePeers().push(peer);
       } else {
-        stream = self.availableStreams()[streamId];
+        peer = self.availablePeers()[peerId];
       }
-      stream.handleMessage(message);
+      peer.handleMessage(message);
   });
     
   this.connection.on('readyToJoin', function() {
     self.joinRoom('sRoom');
   });
   
-  this.getStreamById = function(id) {
-    for(var i=0; i<self.availableStreams().length;i++) {
-      if (self.availableStreams()[i].id === id) {return i;}
+  this.getPeerById = function(id) {
+    for(var i=0; i<self.availablePeers().length;i++) {
+      if (self.availablePeers()[i].id === id) {return i;}
     }
     return -1;
   };
@@ -201,7 +192,7 @@ function RTCclient () {
   this.goToMode = function(mode) {
     if(mode === 'Stream') {
       if(self.chosenMode() === 'Watch') {
-        self.availableStreams().forEach(
+        self.availablePeers().forEach(
           function(stream) {
             if(stream.state() === 'Playing') {self.stopStream(stream);}
           }
@@ -211,11 +202,11 @@ function RTCclient () {
       self.startLocalVideo();
     } else {
       // Load initial state from server
-      $.getJSON("/streams", function(allData) {
-        var mappedStreams = $.map(allData, function(data) { 
-          return new RTCconnection(data.seed, self);
+      $.getJSON("/peers", function(allData) {
+        var mappedPeers = $.map(allData, function(data) { 
+          return new RTCconnection(data.id, self);
         });
-        self.availableStreams(mappedStreams);
+        self.availablePeers(mappedPeers);
       }); 
       if(self.chosenMode() === 'Stream') {
         self.stopLocalVideo();
