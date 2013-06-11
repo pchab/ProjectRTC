@@ -2,14 +2,14 @@
  * GET home page.
  */
  
-var streamList = [];
+var peerList = [];
 
-exports.addStream = function(stream) {
-  streamList.push({id: stream});
+exports.addPeer = function(peer) {
+  peerList.push({id: peer});
 };
 
-exports.removeStream = function(stream) {
-  streamList = streamList.filter(function(el) {return el.id != stream;});
+exports.removePeer = function(peer) {
+  peerList = peerList.filter(function(el) {return el.id != peer;});
 }
 
 exports.index = function(req, res){
@@ -19,6 +19,6 @@ exports.index = function(req, res){
                       });
 };
 
-exports.streams = function(req, res){
-  res.json(200, streamList); 
+exports.peers = function(req, res){
+  res.json(200, peerList); 
 };

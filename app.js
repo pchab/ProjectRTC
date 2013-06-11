@@ -28,7 +28,7 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
-app.get('/streams', routes.streams);
+app.get('/peers', routes.peers);
 
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
