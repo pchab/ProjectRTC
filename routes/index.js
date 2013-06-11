@@ -21,7 +21,7 @@ exports.addNode = function(id, seed) {
 }
 
 exports.getNextNode = function(seed) {
-  return nodes[seed].shift();
+  return nodes[seed][0];
 }
 
 exports.index = function(req, res){
