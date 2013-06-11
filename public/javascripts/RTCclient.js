@@ -112,8 +112,8 @@ function RTCclient () {
       audio:true,
       video: {
         mandatory: {
-          maxHeight: 240,
-          maxWidth: 320 
+          maxHeight: 240
+          maxWidth: 320
         },
         optional: []
       }
@@ -171,6 +171,7 @@ function RTCclient () {
   
   this.getReadyToStream = function(stream) {
     attachMediaStream(self.localVideoEl, stream);
+    self.localVideoEl.muted = "muted";
     self.localStream = stream;
     self.connection.emit('readyToStream');
   };

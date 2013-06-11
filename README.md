@@ -1,8 +1,16 @@
-ProjectRTC
+# ProjectRTC
 ==========
 
-WebRTC Live Streaming
+## WebRTC Live Streaming
 
+- Node.js server
+- WebRTC client
 
-npm install
-node app.js
+## Install
+
+- npm install
+- npm start
+
+## Author
+
+- Pierre Chabardes
