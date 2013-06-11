@@ -21,7 +21,7 @@
         		<th>Action</th><th>Stream ID</th><th>Status</th>
    			</tr>
    		</thead>
-    	<tbody data-bind="foreach: availableStreams">
+    	<tbody data-bind="foreach: availablePeers">
     		<tr>
         		<td>
         			<button type="button" data-bind="visible: state() === 'Available', click: $root.startStream">
