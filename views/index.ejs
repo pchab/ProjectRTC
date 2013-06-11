@@ -15,7 +15,7 @@
 			css: { selected: $data == $root.chosenMode() },
 			click: $root.goToMode"></li>
 	</ul>
-	<div data-bind="visible: chosenMode() === 'Stream'" id="localVideo"></div>
+	<video data-bind="visible: chosenMode() === 'Stream'" id="localVideo"></video>
 	
 	<table data-bind="visible: chosenMode() === 'Watch'">
     	<thead>

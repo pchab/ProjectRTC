@@ -23,8 +23,7 @@ function RTCconnection(id, parent) {
         break;
     case 'closed':
         self.state('Available');
-        container = parent.getRemoteVideosContainer();
-        container.removeChild(self.remoteVideoEl);
+        parent.remoteVideosContainer.removeChild(self.remoteVideoEl);
         self.initPeerConnection();
         break;
     case 'candidate':
@@ -52,8 +51,7 @@ function RTCconnection(id, parent) {
     };
     self.pc.onaddstream = function(event) {
       self.state('Playing');
-      container = parent.getRemoteVideosContainer();
-      container.appendChild(self.remoteVideoEl);
+      parent.remoteVideosContainer.appendChild(self.remoteVideoEl);
       attachMediaStream(self.remoteVideoEl, event.stream);
     };
   };
@@ -128,8 +126,8 @@ function RTCclient () {
     }
   };
   this.localStream;
-  this.localVideoEl = 'localVideo';
-  this.remoteVideosContainer = 'remoteVideosContainer';
+  this.localVideoEl = document.getElementById('localVideo');
+  this.remoteVideosContainer = document.getElementById('remoteVideosContainer');
   
   this.connection = io.connect(this.config.url);
   
@@ -155,14 +153,6 @@ function RTCclient () {
     return -1;
   };
   
-  this.getEl = function(idOrEl) {
-    if (typeof idOrEl == 'string') {
-      return document.getElementById(idOrEl);
-    } else {
-      return idOrEl;
-    }
-  };
-  
   this.joinRoom = function(name) {
     self.connection.emit('join', name)
   };
@@ -176,36 +166,13 @@ function RTCclient () {
   this.stopLocalVideo = function() {
     self.connection.emit('leave');
     self.localStream = '';
-    self.removeLocalVideo();
-  };
-  
-  this.getLocalVideoContainer = function() {
-    var el = self.getEl(this.localVideoEl);
-    var video = document.createElement('video');
-    video.setAttribute('id', 'videoEl');
-    el.appendChild(video);
-    return video;
-  };
-  
-  this.getRemoteVideosContainer = function() {
-    return self.getEl(self.remoteVideosContainer);
-  };
-  
-  this.removeLocalVideo = function() {
-    var el = self.getEl(this.localVideoEl);
-    var video = document.getElementById('videoEl');
-    el.removeChild(video);
+    self.localVideoEl.src = '';
   };
   
   this.getReadyToStream = function(stream) {
-    var container = self.getLocalVideoContainer();
-    attachMediaStream(container, stream);
+    attachMediaStream(self.localVideoEl, stream);
     self.localStream = stream;
     self.connection.emit('readyToStream');
-  };
-  
-  this.goToMode = function(mode) {
-    location.hash = mode;
   };
   
   this.startStream = function(peer) {
