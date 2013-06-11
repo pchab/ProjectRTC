@@ -180,7 +180,10 @@ function RTCclient () {
   };
 
   this.stopStream = function(peer) {
-    self.send(peer.id, 'stop', null);
+    self.connection.emit('message', {
+      to: peer.id,
+      type: 'stop'
+    });
   };
 
   // Client-side route
