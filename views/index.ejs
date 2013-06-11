@@ -1,0 +1,47 @@
+<%= include layoutTop %>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+	<script type="text/javascript" src="javascripts/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="javascripts/knockout-2.2.1.js"></script>
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="javascripts/adapter.js"></script>
+	<script type="text/javascript" src="javascripts/RTCclient.js"></script> 
+
+	<link rel="Stylesheet" href="stylesheets/style.css" />
+  </head>
+  <body>
+	<p><%= header %></p>
+	<ul class="modes" data-bind="foreach: mode">
+		<li data-bind="text: $data,
+			css: { selected: $data == $root.chosenMode() },
+			click: $root.goToMode"></li>
+	</ul>
+	<div data-bind="visible: chosenMode() === 'Stream'" id="localVideo"></div>
+	
+	<table data-bind="visible: chosenMode() === 'Watch'">
+    	<thead>
+    		<tr>
+        		<th>Action</th><th>Stream ID</th><th>Status</th>
+   			</tr>
+   		</thead>
+    	<tbody data-bind="foreach: availableConnections">
+    		<tr>
+        		<td>
+        			<button type="button" data-bind="visible: state() === 'Available', click: $root.startStream">
+        				Play Stream
+        			</button>
+        			<button data-bind="visible: state() === 'Playing', click: $root.stopStream">
+        				Stop Stream
+        			</button>
+        		</td>
+        		<td data-bind="text: id"></td>
+        		<td data-bind="text: state"></td>
+    		</tr>    
+		</tbody>
+		<div id="remoteVideosContainer"></div>
+	</table>
+	
+	<script>
+		var client = new RTCclient();
+		ko.applyBindings(client);
+	</script>
+<%= include layoutBottom %>
