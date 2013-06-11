@@ -23,7 +23,6 @@ if (navigator.mozGetUserMedia) {
     // Attach a media stream to an element.
     attachMediaStream = function(element, stream) {
         element.mozSrcObject = stream;
-        element.controls = 'controls';
         element.play();
     };
 } else if (navigator.webkitGetUserMedia) {

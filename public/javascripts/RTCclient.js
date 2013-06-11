@@ -53,6 +53,7 @@ function RTCconnection(id, parent) {
       self.state('Playing');
       parent.remoteVideosContainer.appendChild(self.remoteVideoEl);
       attachMediaStream(self.remoteVideoEl, event.stream);
+      self.remoteVideoEl.controls = 'controls';
     };
   };
   
