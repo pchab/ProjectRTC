@@ -136,11 +136,11 @@ function RTCclient () {
       var streamId = self.getStreamById(message.from);
       if (streamId === -1) {
         var stream = new RTCconnection(message.from, self);
-        self.availableStreams().push(peer);
+        self.availableStreams().push(stream);
       } else {
-        peer = self.availableStreams()[peerId];
+        stream = self.availableStreams()[streamId];
       }
-      peer.handleMessage(message);
+      stream.handleMessage(message);
   });
     
   this.connection.on('readyToJoin', function() {
