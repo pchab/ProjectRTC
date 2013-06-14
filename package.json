@@ -7,7 +7,8 @@
   },
   "private": true,
   "scripts": {
-    "start": "forever start app.js"
+    "start": "forever start app.js",
+    "stop": "forever stopall"
   },
   "description:": "WebRTC Live Streaming",
   "dependencies": {
