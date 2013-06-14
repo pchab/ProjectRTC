@@ -115,9 +115,7 @@ function RTCclient () {
           maxHeight: 240,
           maxWidth: 320
         },
-        optional: {
-          facingMode: 'environment'
-        }
+        optional: []
       }
     },
     mediaConstraints: {
