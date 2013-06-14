@@ -10,7 +10,7 @@ function RTCconnection(id, parent) {
     console.log('receiving ' + message.type + ' from ' + message.from);
     switch (message.type) {
     case 'offer':
-        self.pc.addStream(parent.localStream);
+        this.pc.addStream(parent.localStream);
         this.pc.setRemoteDescription(new RTCSessionDescription(message.payload));
         this.answer();
         break;
@@ -18,16 +18,16 @@ function RTCconnection(id, parent) {
         this.pc.setRemoteDescription(new RTCSessionDescription(message.payload));
         break;
     case 'stop':
-        self.send('closed', null);
-        self.initPeerConnection();
+        this.send('closed', null);
+        this.initPeerConnection();
         break;
     case 'closed':
-        self.state('Available');
+        this.state('Available');
         parent.remoteVideosContainer.removeChild(self.remoteVideoEl);
-        self.initPeerConnection();
+        this.initPeerConnection();
         break;
     case 'candidate':
-        if(self.pc.remoteDescription) {
+        if(this.pc.remoteDescription) {
           this.pc.addIceCandidate(new RTCIceCandidate({
             sdpMLineIndex: message.payload.label,
             candidate: message.payload.candidate
@@ -39,8 +39,8 @@ function RTCconnection(id, parent) {
   };
   
   this.initPeerConnection = function() {
-    self.pc = new RTCPeerConnection(self.parent.config.peerConnectionConfig, self.parent.config.peerConnectionConstraints);
-    self.pc.onicecandidate = function(event) {
+    this.pc = new RTCPeerConnection(parent.config.peerConnectionConfig, parent.config.peerConnectionConstraints);
+    this.pc.onicecandidate = function(event) {
       if (event.candidate) {
         self.send('candidate', {
           label: event.candidate.sdpMLineIndex,
@@ -49,11 +49,10 @@ function RTCconnection(id, parent) {
         });
       }
     };
-    self.pc.onaddstream = function(event) {
+    this.pc.onaddstream = function(event) {
       self.state('Playing');
       parent.remoteVideosContainer.appendChild(self.remoteVideoEl);
       attachMediaStream(self.remoteVideoEl, event.stream);
-      self.remoteVideoEl.controls = 'controls';
     };
   };
   
@@ -70,7 +69,7 @@ function RTCconnection(id, parent) {
   };
   
   this.offer = function() {
-    self.state('Contacting');
+    this.state('Contacting');
     this.pc.createOffer(
       function (sessionDescription) {
         self.pc.setLocalDescription(sessionDescription);
@@ -85,7 +84,7 @@ function RTCconnection(id, parent) {
   
   this.send = function(type, payload) {
     console.log('sending ' + type + ' to ' + this.id);
-    this.parent.connection.emit('message', {
+    parent.connection.emit('message', {
       to: self.id,
       type: type,
       payload: payload
@@ -142,20 +141,12 @@ function RTCclient () {
       }
       stream.handleMessage(message);
   });
-    
-  this.connection.on('readyToJoin', function() {
-    self.joinRoom('sRoom');
-  });
   
   this.getStreamById = function(id) {
     for(var i=0; i<self.availableStreams().length;i++) {
       if (self.availableStreams()[i].id === id) {return i;}
     }
     return -1;
-  };
-  
-  this.joinRoom = function(name) {
-    self.connection.emit('join', name)
   };
  
   this.startLocalVideo = function(element) {

@@ -48,19 +48,10 @@ io.sockets.on('connection', function(client) {
       details.from = client.id;
       otherClient.emit('message', details);
   });
-
-  client.on('join', function(name) {
-    
-    console.log('-- ' + client.id + ' joined ' + name + ' --');
-    if (name === 'sRoom') {
-      routes.addStream(client.id);
-    }
-    client.join(name);
-  });
     
   client.on('readyToStream', function() {
     console.log('-- ' + client.id + ' is ready to stream --');
-    client.emit('readyToJoin');
+    routes.addStream(client.id);
   });
 
   function leave() {
