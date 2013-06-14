@@ -1,5 +1,4 @@
 # ProjectRTC
-==========
 
 ## WebRTC Live Streaming
 
