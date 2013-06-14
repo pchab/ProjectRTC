@@ -3,12 +3,13 @@
   "version": "0.2.1",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "forever start app.js"
   },
   "description:": "WebRTC Live Streaming",
   "dependencies": {
     "express": "3.2.5",
     "ejs": "*",
-    "socket.io": "~0.9"
+    "socket.io": "~0.9",
+    "forever": "0.10.8"
   }
 }
