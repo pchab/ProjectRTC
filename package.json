@@ -1,6 +1,10 @@
 {
   "name": "ProjectRTC",
   "version": "0.2.1",
+  "repository": {
+    "type": "git", 
+    "url": "git@github.com:pchab/ProjectRTC.git"
+  },
   "private": true,
   "scripts": {
     "start": "forever start app.js"
