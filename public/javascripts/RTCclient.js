@@ -94,7 +94,7 @@ function RTCclient () {
   var self = this;
   this.peerConnections = {};
   this.config = {
-    url: 'http://localhost:3000',
+    url: 'http://54.214.218.3:3000',
     peerConnectionConfig: {
       iceServers: [{"url": "stun:23.21.150.121"}
                   ,{"url": "stun:stun.l.google.com:19302"}]
