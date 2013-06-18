@@ -1,17 +1,18 @@
 <%= include layoutTop %>
   <body>
-  	<p><%= header %></p>
+  	<h1><%= header %></h1>
   	<div class="localCam">
-  		<h1>Local Camera</h1>
+  		<h2>Local Camera</h2>
 		<video id="localVideo"></video>
 		<ul>
 			<li><input data-bind="value: name" /></li>
-			<li><a href="#" data-bind="click: $root.startLocalVideo">Start</a></li>
-			<li><a href="#" data-bind="click: $root.stopLocalVideo">Stop</a></li>
+			<li data-bind="visible: !($root.isStreaming())"><a href="#" data-bind="click: $root.startLocalVideo">Start</a></li>
+			<li data-bind="visible: $root.isStreaming()"><a href="#" data-bind="click: $root.stopLocalVideo">Stop</a></li>
 		</ul>
 	</div>
 	<table>
-		<h1>Remote Streams</h1>
+		<h2>Remote Streams</h2>
+		<div id="remoteVideosContainer"></div>
 		<a href="#" data-bind="click: $root.refresh">Refresh List</a>
     	<thead>
     		<tr>
@@ -24,12 +25,11 @@
         		<td data-bind="text: state"></td>
         		<td data-bind="starRating: points"></td>
     		</tr>
-		</tbody>
-		<div id="remoteVideosContainer"></div>
+		</tbody>		
 	</table>
-	
 	<script>
-		var client = new RTCclient();
-		ko.applyBindings(client);
+		client = new RTCclient();
+		vm = new RTCViewModel(client)
+		ko.applyBindings(vm);
 	</script>
 <%= include layoutBottom %>

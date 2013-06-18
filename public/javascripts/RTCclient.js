@@ -1,19 +1,8 @@
-function RTCconnection(stream, parent) {
+function RTCconnection(id, parent) {
   var self = this;
-  this.id = stream.id;
-  this.name = ko.observable(stream.name);
+  this.id = id;
   this.parent = parent;
-  this.points = ko.observable((stream.votes === 0) ? 0 : stream.rating/stream.votes);
-  ko.computed(function() {
-    if(self.points() !== 0) {
-      parent.connection.emit('rate', {
-        id: self.id,
-        points: self.points()
-      });
-    }
-  });
   this.pc;
-  this.state = ko.observable('Available');
   this.remoteVideoEl = document.createElement('video');
   
   this.handleMessage = function (message) {
@@ -32,7 +21,6 @@ function RTCconnection(stream, parent) {
         this.initPeerConnection();
         break;
     case 'closed':
-        this.state('Available');
         parent.remoteVideosContainer.removeChild(self.remoteVideoEl);
         this.initPeerConnection();
         break;
@@ -60,9 +48,8 @@ function RTCconnection(stream, parent) {
       }
     };
     this.pc.onaddstream = function(event) {
-      self.state('Playing');
-      parent.remoteVideosContainer.appendChild(self.remoteVideoEl);
       attachMediaStream(self.remoteVideoEl, event.stream);
+      parent.remoteVideosContainer.appendChild(self.remoteVideoEl);
     };
   };
   
@@ -79,7 +66,6 @@ function RTCconnection(stream, parent) {
   };
   
   this.offer = function() {
-    this.state('Contacting');
     this.pc.createOffer(
       function (sessionDescription) {
         self.pc.setLocalDescription(sessionDescription);
@@ -106,7 +92,7 @@ function RTCconnection(stream, parent) {
 
 function RTCclient () {
   var self = this;
-  this.availableStreams = ko.observableArray([]);
+  this.peerConnections = {};
   this.config = {
     url: 'http://localhost:3000',
     peerConnectionConfig: {
@@ -134,106 +120,22 @@ function RTCclient () {
     }
   };
   this.connection = io.connect(this.config.url);
-  this.name = ko.observable('My Live');
-  ko.computed(function() {
-    self.connection.emit('rename', self.name);
-  });
   this.localStream;
-  this.localVideoEl = document.getElementById('localVideo');
   this.remoteVideosContainer = document.getElementById('remoteVideosContainer');
   
-  this.connection.on('id', function(id) {
-    this.id = id;
-  });
-  
   this.connection.on('message', function(message) {
-      var streamIndex = self.getStreamById(message.from);
-      if (streamIndex === -1) {
-        var stream = new RTCconnection({id: message.from, name: name, rating: 5}, self);
-        self.availableStreams().push(stream);
-      } else {
-        stream = self.availableStreams()[streamIndex];
-      }
-      stream.handleMessage(message);
+    if (self.peerConnections[message.from]) {
+      var peer = self.peerConnections[message.from];
+    } else {
+      var peer = new RTCconnection(message.from, self);
+      self.peerConnections[message.from] = peer;
+    }
+    peer.handleMessage(message);
   });
   
-  this.getStreamById = function(id) {
-    for(var i=0; i<self.availableStreams().length;i++) {
-      if (self.availableStreams()[i].id === id) {return i;}
-    }
-    return -1;
+  this.peerOffer = function(id) {
+    var peer = new RTCconnection(id, self);
+    this.peerConnections[id] = peer;
+    peer.offer();
   };
- 
-  this.startLocalVideo = function() {
-    getUserMedia(this.config.media, this.getReadyToStream, function () {
-      throw new Error('Failed to get access to local media.');
-    });
-  };
-  
-  this.stopLocalVideo = function() {
-    self.connection.emit('leave');
-    self.localStream = '';
-    self.localVideoEl.src = '';
-  };
-  
-  this.getReadyToStream = function(stream) {
-    attachMediaStream(self.localVideoEl, stream);
-    self.localVideoEl.muted = "muted";
-    self.localStream = stream;
-    self.connection.emit('readyToStream', self.name());
-  };
-  
-  this.chooseStream = function(peer) {
-    if(peer.state() === 'Playing') {
-      self.connection.emit('message', {
-        to: peer.id,
-        type: 'stop'
-      });
-    } else {
-      peer.offer();
-    }
-  };
-
-  this.refresh = function() {
-    // Load initial state from server
-    $.getJSON("/streams", function(allData) {
-      var mappedStreams = $.map(allData, function(data) {
-        var streamIndex = self.getStreamById(data.id);
-        if(streamIndex === -1) {
-          return new RTCconnection(data, self);
-        } else {
-          return self.availableStreams()[streamIndex];
-        }
-      });
-      self.availableStreams(mappedStreams);
-    });
-  };
-  
-  ko.bindingHandlers.starRating = {
-    init: function(element, valueAccessor) {
-      $(element).addClass("starRating");
-      for (var i = 0; i < 5; i++)
-        $("<span>").appendTo(element);
-            
-      // Handle mouse events on the stars
-      $("span", element).each(function(index) {
-        $(this).hover(
-          function() { $(this).prevAll().add(this).addClass("hoverChosen") },
-          function() { $(this).prevAll().add(this).removeClass("hoverChosen") }                
-        ).click(function() {
-          var observable = valueAccessor();  // Get the associated observable
-          observable(index+1);               // Write the new rating to it
-        }); ;
-      });
-    },
-    update: function(element, valueAccessor) {
-      // Give the first x stars the "chosen" class, where x <= rating
-      var observable = valueAccessor();
-      $("span", element).each(function(index) {
-        $(this).toggleClass("chosen", index < observable());
-      });
-    }
-  };
-  
-  this.refresh();
 }

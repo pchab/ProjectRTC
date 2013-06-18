@@ -35,8 +35,7 @@ server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
-function Stream(id, name) {
-  this.id = id;
+function Stream(name) {
   this.name = name;
   this.rating = 0;
   this.votes = 0;
@@ -60,8 +59,8 @@ io.sockets.on('connection', function(client) {
     
   client.on('readyToStream', function(name) {
     console.log('-- ' + client.id + ' is ready to stream --');
-    var stream = new Stream(client.id, name);
-    routes.addStream(stream);
+    var stream = new Stream(name);
+    routes.addStream(client.id, stream);
   });
   
   client.on('rate', function(rating) {
