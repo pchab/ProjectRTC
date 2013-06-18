@@ -4,15 +4,13 @@ function RTCStream(id, stream, client) {
   this.name = ko.observable(stream.name);
   this.client = client;
   this.points = ko.observable((stream.votes === 0) ? 0 : stream.rating/stream.votes);
-  ko.computed(function() {
-    if(self.points() !== 0) {
-      client.connection.emit('rate', {
-        id: self.id,
-        points: self.points()
-      });
-    }
-  });
   this.state = ko.observable('Available');
+  this.rate = function() {
+    client.connection.emit('rate', {
+      id: self.id,
+      points: self.points()
+    });
+  };
 }
 
 function RTCViewModel(client) {
@@ -55,8 +53,10 @@ function RTCViewModel(client) {
         to: stream.id,
         type: 'stop'
       });
+      stream.state('Available');
     } else {
       client.peerOffer(stream.id);
+      stream.state('Playing');
     }
   };
   

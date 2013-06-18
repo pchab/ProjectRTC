@@ -23,7 +23,7 @@
     		<tr class="remoteStream">
         		<td data-bind="text: name, css: { selected: state() == 'Playing' }, click: $root.chooseStream"></td>
         		<td data-bind="text: state"></td>
-        		<td data-bind="starRating: points"></td>
+        		<td data-bind="starRating: points, click: rate"></td>
     		</tr>
 		</tbody>		
 	</table>
