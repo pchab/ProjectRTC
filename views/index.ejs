@@ -1,32 +1,29 @@
 <%= include layoutTop %>
   <body>
-	<p><%= header %></p>
-	<ul class="modes" data-bind="foreach: mode">
-		<li data-bind="text: $data,
-			css: { selected: $data == $root.chosenMode() },
-			click: $root.goToMode"></li>
-	</ul>
-	<video data-bind="visible: chosenMode() === 'Stream'" id="localVideo"></video>
-	
-	<table data-bind="visible: chosenMode() === 'Watch'">
+  	<p><%= header %></p>
+  	<div class="localCam">
+  		<h1>Local Camera</h1>
+		<video id="localVideo"></video>
+		<ul>
+			<li><input data-bind="value: name" /></li>
+			<li><a href="#" data-bind="click: $root.startLocalVideo">Start</a></li>
+			<li><a href="#" data-bind="click: $root.stopLocalVideo">Stop</a></li>
+		</ul>
+	</div>
+	<table>
+		<h1>Remote Streams</h1>
+		<a href="#" data-bind="click: $root.refresh">Refresh List</a>
     	<thead>
     		<tr>
-        		<th>Action</th><th>Stream ID</th><th>Status</th>
+        		<th>Stream</th><th>Status</th><th>Rating</th>
    			</tr>
    		</thead>
     	<tbody data-bind="foreach: availableStreams">
-    		<tr>
-        		<td>
-        			<button type="button" data-bind="visible: state() === 'Available', click: $root.startStream">
-        				Play Stream
-        			</button>
-        			<button data-bind="visible: state() === 'Playing', click: $root.stopStream">
-        				Stop Stream
-        			</button>
-        		</td>
-        		<td data-bind="text: id"></td>
+    		<tr class="remoteStream">
+        		<td data-bind="text: name, css: { selected: state() == 'Playing' }, click: $root.chooseStream"></td>
         		<td data-bind="text: state"></td>
-    		</tr>    
+        		<td data-bind="starRating: points"></td>
+    		</tr>
 		</tbody>
 		<div id="remoteVideosContainer"></div>
 	</table>

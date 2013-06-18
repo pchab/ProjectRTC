@@ -4,20 +4,58 @@ body {
 }
 a {
   color: #00b7ff;
+  text-decoration: none;
 }
 
-.modes { background-color: #bbb; list-style-type: none; padding: 0; margin: 0; border-radius: 7px; 
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #d6d6d6), color-stop(0.4, #c0c0c0), color-stop(1,#a4a4a4)); 
-	margin: 10px 0 16px 0;
-	font-size: 0px;
+.localCam {
+	position: fixed;
+    top: 15px;
+    right: 15px;
+	float: right;
 }
-.modes li:hover { background-color: #ddd; }    
-.modes li:first-child { border-left: none; border-radius: 7px 0 0 7px; }
-.modes li { font-size: 16px; font-weight: bold; display: inline-block; padding: 0.5em 1.5em; cursor: pointer; color: #444; text-shadow: #f7f7f7 0 1px 1px; border-left: 1px solid #ddd; border-right: 1px solid #888; }
-.modes li { *display: inline !important; } /* IE7 only */
-.modes .selected { background-color: #444 !important; color: white; text-shadow:none; border-right-color: #aaa; border-left: none; box-shadow:inset 1px 2px 6px #070707; }
 
+.localCam li {
+	display: inline-block;
+    border: 2px solid black;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: 3px 3px 3px #888;
+    padding: 5px 5px 5px 5px;
+}
+
+.localCam video {
+    border: 5px solid rgb(119, 119, 119);
+    outline: 0px none;
+    height: 240px;
+    width: 320px;
+}
 
 .footer {
-   
+   float: bottom;
+   clear: both;
 }
+
+.starRating span { width:24px; height:24px; background-image: url('/images/stars.png'); display:inline-block; cursor: pointer; background-position: -24px 0; }
+.starRating span.chosen { background-position: 0 0; }
+.starRating:hover span { background-position: -24px 0; }
+.starRating:hover span.hoverChosen { background-position: 0 0; }
+
+.remoteStream {
+	text-align: center;
+}
+
+.remoteStream:hover {
+	cursor: pointer;
+	background-color: #aaa;
+}
+
+.remoteStream .selected {
+	background-color: #444 !important;
+	color: white;
+	text-shadow:none;
+	border-right-color: #aaa;
+	border-left: none;
+	border-radius: 3px 3px 3px 3px;
+	box-shadow:inset 1px 2px 6px #070707;
+}    
+

@@ -29,10 +29,19 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/streams', routes.streams);
+app.post('/rename', routes.rename);
 
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+
+function Stream(id, name) {
+  this.id = id;
+  this.name = name;
+  this.rating = 0;
+  this.votes = 0;
+  this.raters = {};
+}
 
 io.sockets.on('connection', function(client) {
   console.log('-- ' + client.id + ' connected --');
@@ -49,9 +58,18 @@ io.sockets.on('connection', function(client) {
       otherClient.emit('message', details);
   });
     
-  client.on('readyToStream', function() {
+  client.on('readyToStream', function(name) {
     console.log('-- ' + client.id + ' is ready to stream --');
-    routes.addStream(client.id);
+    var stream = new Stream(client.id, name);
+    routes.addStream(stream);
+  });
+  
+  client.on('rate', function(rating) {
+    routes.rate(rating.id, client.id, rating.points);
+  });
+  
+  client.on('rename', function(name) {
+    routes.rename(client.id, name);
   });
 
   function leave() {
