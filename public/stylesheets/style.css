@@ -8,6 +8,8 @@ a {
   text-decoration: none;
 }
 
+table, tr, td, th {margin:0;border:0;padding:5px;border-collapse: collapse;}
+
 .localCam {
 	position: fixed;
     top: 15px;

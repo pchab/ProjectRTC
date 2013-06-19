@@ -76,6 +76,7 @@ function RTCViewModel(client) {
         if(streamIndex === -1) {
           mappedStreams.push(new RTCStream(id, data[id], client));
         } else {
+          self.availableStreams()[streamIndex].name(data[id].name);
           mappedStreams.push(self.availableStreams()[streamIndex]);
         }
       }
