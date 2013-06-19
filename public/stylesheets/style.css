@@ -54,7 +54,6 @@ table, tr, td, th {margin:0;border:0;padding:5px;border-collapse: collapse;}
 
 .remoteStream .selected {
 	background-color: #444 !important;
-	color: white;
 	text-shadow:none;
 	border-right-color: #aaa;
 	border-left: none;
