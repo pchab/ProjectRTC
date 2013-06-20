@@ -9,7 +9,11 @@
 	<script type="text/javascript" src="javascripts/socialViewModel.js"></script>
   </head>
   <body>
-	<h1><%= header %></h1>
+  
+  	<div class="fesse">
+    	<%= header %>
+	</div>
+	
 	<ul data-bind="foreach: messages">
 		<div class="message">
 			<p><strong data-bind="text: name"></strong> posted:</p>

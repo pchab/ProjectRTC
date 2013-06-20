@@ -1,6 +1,6 @@
 {
   "name": "ProjectRTC",
-  "version": "0.2.2",
+  "version": "0.3",
   "author": "Pierre Chabardes <pierre@chabardes.net>",
   "description": "a webRTC live streaming server",
   "scripts": {

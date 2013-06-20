@@ -44,6 +44,6 @@ exports.watch = function(req,res) {
 
 exports.social = function(req, res) {
   res.render('social', { title: 'My social network', 
-                        header: 'Generic social stuff'
+                        header: 'fessebouc'
                       });  
 };
