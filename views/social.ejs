@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="javascripts/knockout-2.2.1.js"></script>
+	<script type="text/javascript" src="javascripts/socialViewModel.js"></script>
+  </head>
+  <body>
+	<h1><%= header %></h1>
+	<ul data-bind="foreach: messages">
+		<div class="message">
+			<p><strong data-bind="text: name"></strong> posted:</p>
+    		<p>Watch my live stream on <a  data-bind="attr: { href: link}">EvntLive</a> !</p>
+    	</div>
+	</ul>
+    
+	<script>
+		ko.applyBindings(new socialViewModel());
+	</script>
+  </body>
+</html>

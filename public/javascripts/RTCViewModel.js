@@ -18,7 +18,7 @@ function RTCViewModel(client) {
   this.client = client;
   this.availableStreams = ko.observable([]);
   this.isStreaming = ko.observable(false);
-  this.name = ko.observable('My Live');
+  this.name = ko.observable('Guest');
   ko.computed(function() {
     if(self.isStreaming()) {
       client.connection.emit('rename', self.name());
@@ -37,6 +37,10 @@ function RTCViewModel(client) {
     self.localVideoEl.src = '';
     client.localStream = '';
     self.isStreaming(false);
+  };
+  
+  this.share = function() {
+    client.connection.emit('share', self.name());
   };
   
   this.getReadyToStream = function(stream) {
