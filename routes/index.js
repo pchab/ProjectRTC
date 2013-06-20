@@ -37,3 +37,13 @@ exports.index = function(req, res) {
 exports.streams = function(req, res) {
   res.json(200, streamList); 
 };
+
+exports.watch = function(req,res) {
+  res.render('watch', { id: req.params.id});
+};
+
+exports.social = function(req, res) {
+  res.render('social', { title: 'My social network', 
+                        header: 'Generic social stuff'
+                      });  
+};

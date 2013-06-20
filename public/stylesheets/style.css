@@ -1,5 +1,5 @@
 body {
-  padding: 50px;
+  padding: 30px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -59,5 +59,14 @@ table, tr, td, th {margin:0;border:0;padding:5px;border-collapse: collapse;}
 	border-left: none;
 	border-radius: 3px 3px 3px 3px;
 	box-shadow:inset 1px 2px 6px #070707;
-}    
+}
+
+.message {  
+    background-color: #eceff6;  
+    border: 1px solid #d4dae8;  
+    color: #333333;  
+    padding: 10px;  
+    font-size: 13px;
+    width: 500px;
+}  
 

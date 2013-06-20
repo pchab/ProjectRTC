@@ -2,12 +2,13 @@
   <body>
   	<h1><%= header %></h1>
   	<div class="localCam">
+  		<p>Username :<input data-bind="value: name" /></p>
   		<h2>Local Camera</h2>
 		<video id="localVideo"></video>
 		<ul>
-			<li><input data-bind="value: name" /></li>
 			<li data-bind="visible: !($root.isStreaming())"><a href="#" data-bind="click: $root.startLocalVideo">Start</a></li>
 			<li data-bind="visible: $root.isStreaming()"><a href="#" data-bind="click: $root.stopLocalVideo">Stop</a></li>
+			<li><a href="#" data-bind="click: $root.share">Share</a></li>
 		</ul>
 	</div>
 	<table>

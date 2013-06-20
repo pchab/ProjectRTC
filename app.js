@@ -29,6 +29,8 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/streams', routes.streams);
+app.get('/socialmedia', routes.social);
+app.get('/:id', routes.watch);
 
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
@@ -68,6 +70,17 @@ io.sockets.on('connection', function(client) {
   
   client.on('rename', function(name) {
     routes.rename(client.id, name);
+  });
+  
+  client.on('join', function() {
+    client.join('social');
+  });
+  
+  client.on('share', function(name) {
+    io.sockets.in('social').emit('message', {
+      name: name,
+      link: client.id
+    });
   });
 
   function leave() {
