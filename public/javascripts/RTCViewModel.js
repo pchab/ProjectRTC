@@ -39,16 +39,14 @@ function RTCViewModel(client) {
     self.isStreaming(false);
   };
   
-  this.share = function() {
-    client.connection.emit('share', self.name());
-  };
-  
   this.getReadyToStream = function(stream) {
     attachMediaStream(self.localVideoEl, stream);
     self.localVideoEl.muted = "muted";
     client.localStream = stream;
     client.connection.emit('readyToStream', self.name());
     self.isStreaming(true);
+    
+    client.connection.emit('share', self.name());
   };
   
   this.chooseStream = function(stream) {
