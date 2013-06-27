@@ -4,7 +4,7 @@
   "author": "Pierre Chabardes <pierre@chabardes.net>",
   "description": "a webRTC live streaming server",
   "scripts": {
-    "start": "forever start app.js",
+    "start": "forever start -l ./log/forever.log -o ./log/server.log -e ./error.log app.js",
     "stop": "forever stopall"
   },
   "repository": {
