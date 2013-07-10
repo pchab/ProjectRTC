@@ -92,6 +92,7 @@ function RTCconnection(id, parent) {
 
 function RTCclient () {
   var self = this;
+  this.id;
   this.peerConnections = {};
   this.config = {
     url: window.location.origin,
@@ -132,6 +133,14 @@ function RTCclient () {
     }
     peer.handleMessage(message);
   });
+  
+  this.connection.on('id', function(id) {
+    self.id = id;
+  });
+  
+  this.getLink = function() {
+    return window.location.origin + "/" + this.id;
+  }
   
   this.peerOffer = function(id) {
     var peer = new RTCconnection(id, self);

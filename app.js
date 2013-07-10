@@ -29,7 +29,6 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/streams', routes.streams);
-app.get('/socialmedia', routes.social);
 app.get('/:id', routes.watch);
 
 server.listen(app.get('port'), function(){
@@ -45,8 +44,8 @@ function Stream(name) {
 
 io.sockets.on('connection', function(client) {
   console.log('-- ' + client.id + ' connected --');
-   	
-  // pass a message
+  client.emit('id', client.id);
+
   client.on('message', function (details) {
     var otherClient = io.sockets.sockets[details.to];
 
@@ -61,7 +60,7 @@ io.sockets.on('connection', function(client) {
   client.on('readyToStream', function(name) {
     console.log('-- ' + client.id + ' is ready to stream --');
     var stream = new Stream(name);
-    routes.addStream(client.id, stream);
+    routes.addStream(client.id, stream); 
   });
   
   client.on('rate', function(rating) {
@@ -70,17 +69,6 @@ io.sockets.on('connection', function(client) {
   
   client.on('rename', function(name) {
     routes.rename(client.id, name);
-  });
-  
-  client.on('join', function() {
-    client.join('social');
-  });
-  
-  client.on('share', function(name) {
-    io.sockets.in('social').emit('message', {
-      name: name,
-      link: client.id
-    });
   });
 
   function leave() {

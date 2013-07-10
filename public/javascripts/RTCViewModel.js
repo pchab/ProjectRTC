@@ -24,6 +24,7 @@ function RTCViewModel(client) {
       client.connection.emit('rename', self.name());
     }
   });
+  this.link = ko.observable();
   this.localVideoEl = document.getElementById('localVideo');
  
   this.startLocalVideo = function() {
@@ -44,9 +45,9 @@ function RTCViewModel(client) {
     self.localVideoEl.muted = "muted";
     client.localStream = stream;
     client.connection.emit('readyToStream', self.name());
+   
+    self.link(client.getLink());
     self.isStreaming(true);
-    
-    client.connection.emit('share', self.name());
   };
   
   this.chooseStream = function(stream) {

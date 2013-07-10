@@ -9,6 +9,10 @@
 			<li data-bind="visible: !($root.isStreaming())"><a href="#" data-bind="click: $root.startLocalVideo">Share</a></li>
 			<li data-bind="visible: $root.isStreaming()"><a href="#" data-bind="click: $root.stopLocalVideo">Stop</a></li>
 		</ul>
+		<p data-bind="visible: $root.isStreaming()">
+			Share this link :
+			<a data-bind="text: link"></a>
+		</p>
 	</div>
 	<table>
 		<h2>Remote Streams</h2>
