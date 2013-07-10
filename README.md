@@ -3,7 +3,8 @@
 ## WebRTC Live Streaming
 
 - Node.js server
-- WebRTC client
+- Desktop client
+- [Android client](https://github.com/pchab/AndroidRTC)
 
 ## Install
 
