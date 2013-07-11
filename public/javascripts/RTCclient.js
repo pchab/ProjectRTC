@@ -28,6 +28,7 @@ function RTCconnection(id, parent) {
         if(this.pc.remoteDescription) {
           this.pc.addIceCandidate(new RTCIceCandidate({
             sdpMLineIndex: message.payload.label,
+            sdpMid: message.payload.id,
             candidate: message.payload.candidate
             })
           );
@@ -107,8 +108,8 @@ function RTCclient () {
       audio:true,
       video: {
         mandatory: {
-          maxHeight: 240,
-          maxWidth: 320
+          // maxHeight: 240,
+          // maxWidth: 320
         },
         optional: []
       }

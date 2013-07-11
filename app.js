@@ -72,7 +72,7 @@ io.sockets.on('connection', function(client) {
   });
 
   function leave() {
-    console.log('-- ' + client.id + ' leaved --');
+    console.log('-- ' + client.id + ' left --');
     routes.removeStream(client.id);
   }
 
