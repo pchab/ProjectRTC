@@ -1,7 +1,6 @@
 /**
  * Module dependencies.
  */
-
 var express = require('express')
   , routes = require('./routes')
   , http = require('http')
@@ -27,6 +26,7 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+// routing
 app.get('/', routes.index);
 app.get('/streams', routes.streams);
 app.get('/:id', routes.watch);
@@ -35,6 +35,11 @@ server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
+/**
+ * Stream object
+ *
+ * Stored in JSON using socket.id as key
+ */
 function Stream(name) {
   this.name = name;
   this.rating = 0;
@@ -42,8 +47,11 @@ function Stream(name) {
   this.raters = {};
 }
 
+/**
+ * Socket.io event handling
+ */
 io.sockets.on('connection', function(client) {
-  console.log('-- ' + client.id + ' connected --');
+  console.log('-- ' + client.id + ' joined --');
   client.emit('id', client.id);
 
   client.on('message', function (details) {

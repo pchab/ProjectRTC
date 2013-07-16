@@ -36,7 +36,7 @@ function RTCViewModel(client) {
   this.stopLocalVideo = function() {
     client.connection.emit('leave');
     self.localVideoEl.src = '';
-    client.localStream = '';
+    client.localStream.stop();
     self.isStreaming(false);
   };
   
@@ -45,8 +45,7 @@ function RTCViewModel(client) {
     self.localVideoEl.muted = "muted";
     client.localStream = stream;
     client.connection.emit('readyToStream', self.name());
-   
-    self.link(client.getLink());
+    self.link(window.location.origin + "/" + client.id);
     self.isStreaming(true);
   };
   
@@ -75,18 +74,25 @@ function RTCViewModel(client) {
     $.getJSON("/streams", function(data) {
       var mappedStreams = [];
       for(var id in data) {
-        var streamIndex = self.getStreamById(id);
-        if(streamIndex === -1) {
-          mappedStreams.push(new RTCStream(id, data[id], client));
-        } else {
-          self.availableStreams()[streamIndex].name(data[id].name);
-          mappedStreams.push(self.availableStreams()[streamIndex]);
+        if(id !== client.id) {
+          var streamIndex = self.getStreamById(id);
+          if(streamIndex === -1) {
+            mappedStreams.push(new RTCStream(id, data[id], client));
+          } else {
+            self.availableStreams()[streamIndex].name(data[id].name);
+            mappedStreams.push(self.availableStreams()[streamIndex]);
+          }
         }
       }
       self.availableStreams(mappedStreams);
     });
   };
   
+  
+  /**
+   * Star-rating binding taken from Knockoutjs tutorial on custom bindings
+   * http://learn.knockoutjs.com/#/?tutorial=custombindings
+   */
   ko.bindingHandlers.starRating = {
     init: function(element, valueAccessor) {
       $(element).addClass("starRating");

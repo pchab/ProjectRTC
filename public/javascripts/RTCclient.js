@@ -5,6 +5,23 @@ function RTCconnection(id, parent) {
   this.pc;
   this.remoteVideoEl = document.createElement('video');
   
+  this.initPeerConnection = function() {
+    this.pc = new RTCPeerConnection(parent.config.peerConnectionConfig, parent.config.peerConnectionConstraints);
+    this.pc.onicecandidate = function(event) {
+      if (event.candidate) {
+        self.send('candidate', {
+          label: event.candidate.sdpMLineIndex,
+          id: event.candidate.sdpMid,
+          candidate: event.candidate.candidate
+        });
+      }
+    };
+    this.pc.onaddstream = function(event) {
+      attachMediaStream(self.remoteVideoEl, event.stream);
+      parent.remoteVideosContainer.appendChild(self.remoteVideoEl);
+    };
+  };
+  
   this.handleMessage = function (message) {
     console.log('receiving ' + message.type + ' from ' + message.from);
     switch (message.type) {
@@ -37,23 +54,6 @@ function RTCconnection(id, parent) {
     }
   };
   
-  this.initPeerConnection = function() {
-    this.pc = new RTCPeerConnection(parent.config.peerConnectionConfig, parent.config.peerConnectionConstraints);
-    this.pc.onicecandidate = function(event) {
-      if (event.candidate) {
-        self.send('candidate', {
-          label: event.candidate.sdpMLineIndex,
-          id: event.candidate.sdpMid,
-          candidate: event.candidate.candidate
-        });
-      }
-    };
-    this.pc.onaddstream = function(event) {
-      attachMediaStream(self.remoteVideoEl, event.stream);
-      parent.remoteVideosContainer.appendChild(self.remoteVideoEl);
-    };
-  };
-  
   this.answer = function() {
     this.pc.createAnswer(
       function (sessionDescription) {
@@ -63,7 +63,8 @@ function RTCconnection(id, parent) {
       function(error) { 
         console.log(error);
       },
-      parent.config.mediaConstraints);
+      parent.config.mediaConstraints
+    );
   };
   
   this.offer = function() {
@@ -139,13 +140,13 @@ function RTCclient () {
     self.id = id;
   });
   
-  this.getLink = function() {
-    return window.location.origin + "/" + this.id;
-  }
-  
   this.peerOffer = function(id) {
-    var peer = new RTCconnection(id, self);
-    this.peerConnections[id] = peer;
-    peer.offer();
+    if (this.peerConnections[id]) {
+      this.peerConnections[id].pc.addStream(this.localStream);
+    } else {
+      var peer = new RTCconnection(id, self);
+      this.peerConnections[id] = peer;
+      peer.offer();
+    }    
   };
 }
