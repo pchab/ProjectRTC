@@ -16,7 +16,7 @@ var PeerManager = (function () {
           }
         }
       },
-      PeerDatabase = {},
+      peerDatabase = {},
       localStream,
       remoteVideoContainer = document.getElementById('remoteVideosContainer'),
       connection = io.connect(window.location.origin);
@@ -29,15 +29,16 @@ var PeerManager = (function () {
   function addPeer(remoteId) {
     var peer = new Peer(config.peerConnectionConfig, config.peerConnectionConstraints);
 
-    PeerDatabase[remoteId] = peer;
+    peerDatabase[remoteId] = peer;
     initPeerConnection(remoteId);
         
     return peer;
   }  
   function initPeerConnection(remoteId) {
-    var peer = PeerDatabase[remoteId];
+    var peer = peerDatabase[remoteId];
     peer.pc.onicecandidate = function(event) {
       if (event.candidate) {
+        console.log(event.candidate);
         send('candidate', remoteId, {
           label: event.candidate.sdpMLineIndex,
           id: event.candidate.sdpMid,
@@ -51,10 +52,10 @@ var PeerManager = (function () {
     };
   }
   function answer(remoteId) {
-    var peer = PeerDatabase[remoteId];
-    peer.pc.createAnswer(
-      function (sessionDescription) {
-        peer.pc.setLocalDescription(sessionDescription);
+    var pc = peerDatabase[remoteId].pc;
+    pc.createAnswer(
+      function(sessionDescription) {
+        pc.setLocalDescription(sessionDescription);
         send('answer', remoteId, sessionDescription);
       }, 
       function(error) { 
@@ -64,10 +65,10 @@ var PeerManager = (function () {
     );
   }
   function offer(remoteId) {
-    var peer = PeerDatabase[remoteId];
-    peer.pc.createOffer(
-      function (sessionDescription) {
-        peer.pc.setLocalDescription(sessionDescription);
+    var pc = peerDatabase[remoteId].pc;
+    pc.createOffer(
+      function(sessionDescription) {
+        pc.setLocalDescription(sessionDescription);
         send('offer', remoteId, sessionDescription);
       }, 
       function(error) { 
@@ -79,24 +80,16 @@ var PeerManager = (function () {
   function handleMessage(message) {
         var type = message.type,
             from = message.from,
-            peer = PeerDatabase[from] || addPeer(from);
+            peer = peerDatabase[from] || addPeer(from);
       
         switch (type) {
           case 'offer':
-            peer.pc.addStream(localStream);
+            peer.pc.getLocalStreams().length ? peer.pc.removeStream(localStream) : peer.pc.addStream(localStream);
             peer.pc.setRemoteDescription(new RTCSessionDescription(message.payload));
             answer(from);
             break;
           case 'answer':
             peer.pc.setRemoteDescription(new RTCSessionDescription(message.payload));
-            break;
-          case 'stop':
-            send('closed', from, null);
-            initPeerConnection(remoteId);
-            break;
-          case 'closed':
-            remoteVideosContainer.removeChild(peer.remoteVideoEl);
-            initPeerConnection(remoteId);
             break;
           case 'candidate':
             if(peer.pc.remoteDescription) {
@@ -119,22 +112,28 @@ var PeerManager = (function () {
   }
 
   return {
+      getId: function() {
+        return localId;
+      },
+      
       setLocalStream: function(stream) {
         localStream = stream;
       },
       
       peerOffer: function(remoteId) {
-        addPeer(remoteId);
-        initPeerConnection(remoteId);
+        if(!peerDatabase[remoteId]) {
+          addPeer(remoteId);
+        }
         offer(remoteId);
+      },
+      
+      toggleVisibility: function(remoteId, state) {
+        var peer = peerDatabase[remoteId];
+        peer.remoteVideoEl.style.display = state;
       },
       
       send: function(type, payload) {
         connection.emit(type, payload);
-      },
-      
-      getId: function() {
-        return localId;
       }
   };
   

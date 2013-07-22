@@ -19,10 +19,7 @@ function RTCViewModel(client) {
   this.mediaConfig = {
           audio:true,
           video: {
-            mandatory: {
-            // maxHeight: 240,
-            // maxWidth: 320
-            },
+            mandatory: {},
             optional: []
           }
         },
@@ -36,7 +33,6 @@ function RTCViewModel(client) {
   });
   this.link = ko.observable();
   this.localVideoEl = document.getElementById('localVideo');
- 
   this.startLocalVideo = function() {
     getUserMedia(this.mediaConfig, this.getReadyToStream, function () {
       throw new Error('Failed to get access to local media.');
@@ -60,16 +56,14 @@ function RTCViewModel(client) {
   };
   
   this.chooseStream = function(stream) {
-    if(stream.state() === 'Playing') {
-      client.send('message', {
-        to: stream.id,
-        type: 'stop'
-      });
-      stream.state('Available');
+    client.peerOffer(stream.id);
+    if(stream.state() === 'Playing') { 
+      client.toggleVisibility(stream.id, 'none');
+      stream.state('Available') 
     } else {
-      client.peerOffer(stream.id);
+      client.toggleVisibility(stream.id, '');
       stream.state('Playing');
-    }
+      }
   };
   
   this.getStreamById = function(id) {
