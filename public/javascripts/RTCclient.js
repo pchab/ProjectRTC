@@ -1,152 +1,146 @@
-function RTCconnection(id, parent) {
-  var self = this;
-  this.id = id;
-  this.parent = parent;
-  this.pc;
-  this.remoteVideoEl = document.createElement('video');
-  
-  this.initPeerConnection = function() {
-    this.pc = new RTCPeerConnection(parent.config.peerConnectionConfig, parent.config.peerConnectionConstraints);
-    this.pc.onicecandidate = function(event) {
+var PeerManager = (function () {
+
+  var localId,
+      config = {
+        peerConnectionConfig: {
+          iceServers: [{"url": "stun:23.21.150.121"}
+                      ,{"url": "stun:stun.l.google.com:19302"}]
+        },
+        peerConnectionConstraints: {
+          optional: [{"DtlsSrtpKeyAgreement": true}]
+        },
+        mediaConstraints: {
+          'mandatory': {
+            'OfferToReceiveAudio': true,
+            'OfferToReceiveVideo': true
+          }
+        }
+      },
+      PeerDatabase = {},
+      localStream,
+      remoteVideoContainer = document.getElementById('remoteVideosContainer'),
+      connection = io.connect(window.location.origin);
+      
+  connection.on('message', handleMessage);
+  connection.on('id', function(id) {
+    localId = id;
+  });
+      
+  function addPeer(remoteId) {
+    var peer = new Peer(config.peerConnectionConfig, config.peerConnectionConstraints);
+
+    PeerDatabase[remoteId] = peer;
+    initPeerConnection(remoteId);
+        
+    return peer;
+  }  
+  function initPeerConnection(remoteId) {
+    var peer = PeerDatabase[remoteId];
+    peer.pc.onicecandidate = function(event) {
       if (event.candidate) {
-        self.send('candidate', {
+        send('candidate', remoteId, {
           label: event.candidate.sdpMLineIndex,
           id: event.candidate.sdpMid,
           candidate: event.candidate.candidate
         });
       }
     };
-    this.pc.onaddstream = function(event) {
-      attachMediaStream(self.remoteVideoEl, event.stream);
-      parent.remoteVideosContainer.appendChild(self.remoteVideoEl);
+    peer.pc.onaddstream = function(event) {
+      attachMediaStream(peer.remoteVideoEl, event.stream);
+      remoteVideosContainer.appendChild(peer.remoteVideoEl);
     };
-  };
-  
-  this.handleMessage = function (message) {
-    console.log('receiving ' + message.type + ' from ' + message.from);
-    switch (message.type) {
-    case 'offer':
-        this.pc.addStream(parent.localStream);
-        this.pc.setRemoteDescription(new RTCSessionDescription(message.payload));
-        this.answer();
-        break;
-    case 'answer':
-        this.pc.setRemoteDescription(new RTCSessionDescription(message.payload));
-        break;
-    case 'stop':
-        this.send('closed', null);
-        this.initPeerConnection();
-        break;
-    case 'closed':
-        parent.remoteVideosContainer.removeChild(self.remoteVideoEl);
-        this.initPeerConnection();
-        break;
-    case 'candidate':
-        if(this.pc.remoteDescription) {
-          this.pc.addIceCandidate(new RTCIceCandidate({
-            sdpMLineIndex: message.payload.label,
-            sdpMid: message.payload.id,
-            candidate: message.payload.candidate
-            })
-          );
-        }
-        break;
-    }
-  };
-  
-  this.answer = function() {
-    this.pc.createAnswer(
+  }
+  function answer(remoteId) {
+    var peer = PeerDatabase[remoteId];
+    peer.pc.createAnswer(
       function (sessionDescription) {
-        self.pc.setLocalDescription(sessionDescription);
-        self.send('answer', sessionDescription);
+        peer.pc.setLocalDescription(sessionDescription);
+        send('answer', remoteId, sessionDescription);
       }, 
       function(error) { 
         console.log(error);
       },
-      parent.config.mediaConstraints
+      config.mediaConstraints
     );
-  };
-  
-  this.offer = function() {
-    this.pc.createOffer(
+  }
+  function offer(remoteId) {
+    var peer = PeerDatabase[remoteId];
+    peer.pc.createOffer(
       function (sessionDescription) {
-        self.pc.setLocalDescription(sessionDescription);
-        self.send('offer', sessionDescription);
+        peer.pc.setLocalDescription(sessionDescription);
+        send('offer', remoteId, sessionDescription);
       }, 
-      function(error) {
+      function(error) { 
         console.log(error);
-      }, 
-      parent.config.mediaConstraints
+      },
+      config.mediaConstraints
     );
-  };
-  
-  this.send = function(type, payload) {
-    console.log('sending ' + type + ' to ' + this.id);
-    parent.connection.emit('message', {
-      to: self.id,
+  }
+  function handleMessage(message) {
+        var type = message.type,
+            from = message.from,
+            peer = PeerDatabase[from] || addPeer(from);
+      
+        switch (type) {
+          case 'offer':
+            peer.pc.addStream(localStream);
+            peer.pc.setRemoteDescription(new RTCSessionDescription(message.payload));
+            answer(from);
+            break;
+          case 'answer':
+            peer.pc.setRemoteDescription(new RTCSessionDescription(message.payload));
+            break;
+          case 'stop':
+            send('closed', from, null);
+            initPeerConnection(remoteId);
+            break;
+          case 'closed':
+            remoteVideosContainer.removeChild(peer.remoteVideoEl);
+            initPeerConnection(remoteId);
+            break;
+          case 'candidate':
+            if(peer.pc.remoteDescription) {
+              peer.pc.addIceCandidate(new RTCIceCandidate({
+                sdpMLineIndex: message.payload.label,
+                sdpMid: message.payload.id,
+                candidate: message.payload.candidate
+              }));
+            }
+            break;
+        }
+      }
+  function send(type, to, payload) {
+    console.log('sending ' + type + ' to ' + to);
+    connection.emit('message', {
+      to: to,
       type: type,
       payload: payload
     });
-  };
-  
-  this.initPeerConnection();
-}
+  }
 
-function RTCclient () {
-  var self = this;
-  this.id;
-  this.peerConnections = {};
-  this.config = {
-    url: window.location.origin,
-    peerConnectionConfig: {
-      iceServers: [{"url": "stun:23.21.150.121"}
-                  ,{"url": "stun:stun.l.google.com:19302"}]
-    },
-    peerConnectionConstraints: {
-      optional: [{"DtlsSrtpKeyAgreement": true}]
-    },
-    media: {
-      audio:true,
-      video: {
-        mandatory: {
-          // maxHeight: 240,
-          // maxWidth: 320
-        },
-        optional: []
+  return {
+      setLocalStream: function(stream) {
+        localStream = stream;
+      },
+      
+      peerOffer: function(remoteId) {
+        addPeer(remoteId);
+        initPeerConnection(remoteId);
+        offer(remoteId);
+      },
+      
+      send: function(type, payload) {
+        connection.emit(type, payload);
+      },
+      
+      getId: function() {
+        return localId;
       }
-    },
-    mediaConstraints: {
-      'mandatory': {
-          'OfferToReceiveAudio': true,
-          'OfferToReceiveVideo': true
-      }
-    }
   };
-  this.connection = io.connect(this.config.url);
-  this.localStream;
-  this.remoteVideosContainer = document.getElementById('remoteVideosContainer');
   
-  this.connection.on('message', function(message) {
-    if (self.peerConnections[message.from]) {
-      var peer = self.peerConnections[message.from];
-    } else {
-      var peer = new RTCconnection(message.from, self);
-      self.peerConnections[message.from] = peer;
-    }
-    peer.handleMessage(message);
-  });
-  
-  this.connection.on('id', function(id) {
-    self.id = id;
-  });
-  
-  this.peerOffer = function(id) {
-    if (this.peerConnections[id]) {
-      this.peerConnections[id].pc.addStream(this.localStream);
-    } else {
-      var peer = new RTCconnection(id, self);
-      this.peerConnections[id] = peer;
-      peer.offer();
-    }    
-  };
+});
+
+var Peer = function (pcConfig, pcConstraints) {
+  this.pc = new RTCPeerConnection(pcConfig, pcConstraints);
+  this.remoteVideoEl = document.createElement('video');
 }

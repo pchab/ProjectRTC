@@ -6,7 +6,7 @@ function RTCStream(id, stream, client) {
   this.points = ko.observable((stream.votes === 0) ? 0 : stream.rating/stream.votes);
   this.state = ko.observable('Available');
   this.rate = function() {
-    client.connection.emit('rate', {
+    client.send('rate', {
       id: self.id,
       points: self.points()
     });
@@ -16,42 +16,52 @@ function RTCStream(id, stream, client) {
 function RTCViewModel(client) {
   var self = this;
   this.client = client;
+  this.mediaConfig = {
+          audio:true,
+          video: {
+            mandatory: {
+            // maxHeight: 240,
+            // maxWidth: 320
+            },
+            optional: []
+          }
+        },
   this.availableStreams = ko.observable([]);
   this.isStreaming = ko.observable(false);
   this.name = ko.observable('Guest');
   ko.computed(function() {
     if(self.isStreaming()) {
-      client.connection.emit('rename', self.name());
+      client.send('rename', self.name());
     }
   });
   this.link = ko.observable();
   this.localVideoEl = document.getElementById('localVideo');
  
   this.startLocalVideo = function() {
-    getUserMedia(client.config.media, this.getReadyToStream, function () {
+    getUserMedia(this.mediaConfig, this.getReadyToStream, function () {
       throw new Error('Failed to get access to local media.');
     });
   };
   
   this.stopLocalVideo = function() {
-    client.connection.emit('leave');
+    client.send('leave');
     self.localVideoEl.src = '';
-    client.localStream.stop();
+    client.setLocalStream(null);
     self.isStreaming(false);
   };
   
   this.getReadyToStream = function(stream) {
     attachMediaStream(self.localVideoEl, stream);
     self.localVideoEl.muted = "muted";
-    client.localStream = stream;
-    client.connection.emit('readyToStream', self.name());
-    self.link(window.location.origin + "/" + client.id);
+    client.setLocalStream(stream);
+    client.send('readyToStream', self.name());
+    self.link(window.location.origin + "/" + client.getId());
     self.isStreaming(true);
   };
   
   this.chooseStream = function(stream) {
     if(stream.state() === 'Playing') {
-      client.connection.emit('message', {
+      client.send('message', {
         to: stream.id,
         type: 'stop'
       });
