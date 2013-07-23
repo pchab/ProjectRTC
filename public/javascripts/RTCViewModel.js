@@ -78,7 +78,7 @@ function RTCViewModel(client) {
     $.getJSON("/streams", function(data) {
       var mappedStreams = [];
       for(var id in data) {
-        if(id !== client.id) {
+        if(id !== client.getId()) {
           var streamIndex = self.getStreamById(id);
           if(streamIndex === -1) {
             mappedStreams.push(new RTCStream(id, data[id], client));
