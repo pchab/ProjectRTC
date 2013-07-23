@@ -38,7 +38,6 @@ var PeerManager = (function () {
     var peer = peerDatabase[remoteId];
     peer.pc.onicecandidate = function(event) {
       if (event.candidate) {
-        console.log(event.candidate);
         send('candidate', remoteId, {
           label: event.candidate.sdpMLineIndex,
           id: event.candidate.sdpMid,
