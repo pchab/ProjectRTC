@@ -28,14 +28,6 @@ var PeerManager = (function () {
       
   function addPeer(remoteId) {
     var peer = new Peer(config.peerConnectionConfig, config.peerConnectionConstraints);
-
-    peerDatabase[remoteId] = peer;
-    initPeerConnection(remoteId);
-        
-    return peer;
-  }  
-  function initPeerConnection(remoteId) {
-    var peer = peerDatabase[remoteId];
     peer.pc.onicecandidate = function(event) {
       if (event.candidate) {
         send('candidate', remoteId, {
@@ -49,6 +41,10 @@ var PeerManager = (function () {
       attachMediaStream(peer.remoteVideoEl, event.stream);
       remoteVideosContainer.appendChild(peer.remoteVideoEl);
     };
+
+    peerDatabase[remoteId] = peer;
+        
+    return peer;
   }
   function answer(remoteId) {
     var pc = peerDatabase[remoteId].pc;
@@ -100,7 +96,7 @@ var PeerManager = (function () {
             }
             break;
         }
-      }
+  }
   function send(type, to, payload) {
     console.log('sending ' + type + ' to ' + to);
     connection.emit('message', {
