@@ -1,6 +1,8 @@
 <%= include layoutTop %>
   <body>
   	<h1><%= header %></h1>
+
+  	
   	<div class="localCam">
   		<p>Username :<input data-bind="value: name" /></p>
   		<h2>Local Camera</h2>
@@ -14,6 +16,8 @@
 			<a data-bind="text: link"></a>
 		</p>
 	</div>
+
+
 	<table>
 		<h2>Remote Streams</h2>
 		<div id="remoteVideosContainer"></div>
@@ -31,6 +35,8 @@
     		</tr>
 		</tbody>		
 	</table>
+
+
 	<script>
 		client = new PeerManager();
 		vm = new RTCViewModel(client)

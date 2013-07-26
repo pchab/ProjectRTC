@@ -1,16 +1,9 @@
-function RTCStream(id, stream, client) {
+function RTCStream(id, stream) {
   var self = this;
   this.id = id;
   this.name = ko.observable(stream.name);
-  this.client = client;
   this.points = ko.observable((stream.votes === 0) ? 0 : stream.rating/stream.votes);
-  this.state = ko.observable('Available');
-  this.rate = function() {
-    client.send('rate', {
-      id: self.id,
-      points: self.points()
-    });
-  };
+  this.state = ko.observable('Available'); 
 }
 
 function RTCViewModel(client) {
@@ -73,6 +66,13 @@ function RTCViewModel(client) {
     return -1;
   };
 
+  this.rate = function(stream) {
+    client.send('rate', {
+      id: stream.id,
+      points: stream.points()
+    });
+  };
+
   this.refresh = function() {
     // Load initial state from server
     $.getJSON("/streams", function(data) {
@@ -81,7 +81,7 @@ function RTCViewModel(client) {
         if(id !== client.getId()) {
           var streamIndex = self.getStreamById(id);
           if(streamIndex === -1) {
-            mappedStreams.push(new RTCStream(id, data[id], client));
+            mappedStreams.push(new RTCStream(id, data[id]));
           } else {
             self.availableStreams()[streamIndex].name(data[id].name);
             mappedStreams.push(self.availableStreams()[streamIndex]);
