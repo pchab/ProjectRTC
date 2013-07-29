@@ -48,7 +48,7 @@ var RTCViewModel = function(client) {
     localVideoEl.muted = "muted";
     client.setLocalStream(stream);
     client.send('readyToStream', name());
-    link(window.location.origin + "/" + client.getId());
+    link(window.location.host + "/" + client.getId());
     isStreaming(true);
   }
   function getStreamById(id) {
