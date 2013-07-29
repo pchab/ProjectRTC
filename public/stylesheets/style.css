@@ -17,6 +17,13 @@ table, tr, td, th {margin: 0;border: 0;padding: 5px;border-collapse: collapse;}
 	float: right;
 }
 
+.localCam video {
+    border: 5px solid rgb(119, 119, 119);
+    outline: 0px none;
+    height: 240px;
+    width: 320px;
+}
+
 .localCam li {
     list-style-type: none;
     border: 2px solid black;
@@ -30,18 +37,6 @@ table, tr, td, th {margin: 0;border: 0;padding: 5px;border-collapse: collapse;}
   cursor: pointer;
   background-color: #aaa;
 }
-
-.localCam video {
-    border: 5px solid rgb(119, 119, 119);
-    outline: 0px none;
-    height: 240px;
-    width: 320px;
-}
-
-.starRating span { width:24px; height:24px; background-image: url('/images/stars.png'); display:inline-block; cursor: pointer; background-position: -24px 0; }
-.starRating span.chosen { background-position: 0 0; }
-.starRating:hover span { background-position: -24px 0; }
-.starRating:hover span.hoverChosen { background-position: 0 0; }
 
 .remoteStream {
 	text-align: center;
@@ -60,6 +55,11 @@ table, tr, td, th {margin: 0;border: 0;padding: 5px;border-collapse: collapse;}
 	border-radius: 3px 3px 3px 3px; 
 	box-shadow:inset 1px 2px 6px #070707;
 }
+
+.starRating span { width:24px; height:24px; background-image: url('/images/stars.png'); display:inline-block; cursor: pointer; background-position: -24px 0; }
+.starRating span.chosen { background-position: 0 0; }
+.starRating:hover span { background-position: -24px 0; }
+.starRating:hover span.hoverChosen { background-position: 0 0; }
 
 .footer {
    clear: both;
