@@ -122,9 +122,9 @@ var PeerManager = (function () {
         offer(remoteId);
       },
       
-      toggleVisibility: function(remoteId, state) {
+      toggleVisibility: function(remoteId, flag) {
         var peer = peerDatabase[remoteId];
-        peer.remoteVideoEl.style.display = state;
+        peer.remoteVideoEl.style.display = flag ? '' : 'none';
       },
       
       send: function(type, payload) {

@@ -8,10 +8,9 @@
   		<h2>Local Camera</h2>
 		<video id="localVideo"></video>
 		<ul>
-			<li data-bind="visible: !($root.isStreaming())"><a href="#" data-bind="click: $root.startLocalVideo">Share</a></li>
-			<li data-bind="visible: $root.isStreaming()"><a href="#" data-bind="click: $root.stopLocalVideo">Stop</a></li>
+			<li><a href="#" data-bind="click: toggleLocalVideo, text: localCamButtonText"></a></li>
 		</ul>
-		<p data-bind="visible: $root.isStreaming()">
+		<p data-bind="visible: isStreaming">
 			Share this link :
 			<a data-bind="text: link"></a>
 		</p>
@@ -27,11 +26,13 @@
         		<th>Stream</th><th>Status</th><th>Rating</th>
    			</tr>
    		</thead>
-    	<tbody data-bind="foreach: availableStreams">
+    	<tbody data-bind="foreach: streams">
     		<tr class="remoteStream">
-        		<td data-bind="css: { selected: state() == 'Playing' }, click: $root.chooseStream"><a data-bind="text: name"></a></td>
+        		<td data-bind="css: { selected: state() == 'Playing' }, click: $root.toggleRemoteVideo">
+        			<a data-bind="text: name"></a>
+        		</td>
         		<td data-bind="text: state"></td>
-        		<td data-bind="starRating: points, click: rate"></td>
+        		<td data-bind="starRating: points, click: $root.rate"></td>
     		</tr>
 		</tbody>		
 	</table>
@@ -39,7 +40,8 @@
 
 	<script>
 		client = new PeerManager();
-		vm = new RTCViewModel(client)
+		vm = new RTCViewModel(client);
+		vm.refresh();
 		ko.applyBindings(vm);
 	</script>
 <%= include layoutBottom %>
