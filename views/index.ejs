@@ -4,23 +4,31 @@
 
   	
   	<div class="localCam">
-  		<p>Username :<input data-bind="value: name" /></p>
+
   		<h2>Local Camera</h2>
+
+  		<p>Username :<input data-bind="value: name" /></p>
 		<video id="localVideo"></video>
-		<ul>
-			<li><a href="#" data-bind="click: toggleLocalVideo, text: localCamButtonText"></a></li>
-		</ul>
-		<p data-bind="visible: isStreaming">
-			Share this link :
+		<li data-bind="click: toggleLocalVideo">
+			<a href="#" data-bind="text: localCamButtonText"></a>
+		</li>
+
+		<div data-bind="visible: isStreaming">
+			
+			<p>Share this link :</p>
 			<a data-bind="text: link"></a>
-		</p>
+
+		</div>
 	</div>
 
 
 	<table>
+
 		<h2>Remote Streams</h2>
+
 		<div id="remoteVideosContainer"></div>
 		<a href="#" data-bind="click: $root.refresh">Refresh List</a>
+
     	<thead>
     		<tr>
         		<th>Stream</th><th>Status</th><th>Rating</th>
@@ -28,13 +36,14 @@
    		</thead>
     	<tbody data-bind="foreach: streams">
     		<tr class="remoteStream">
-        		<td data-bind="css: { selected: state() == 'Playing' }, click: $root.toggleRemoteVideo">
+        		<td data-bind="css: { selected: isPlaying() }, click: $root.toggleRemoteVideo">
         			<a data-bind="text: name"></a>
         		</td>
         		<td data-bind="text: state"></td>
         		<td data-bind="starRating: points, click: $root.rate"></td>
     		</tr>
-		</tbody>		
+		</tbody>
+
 	</table>
 
 
@@ -44,4 +53,5 @@
 		vm.refresh();
 		ko.applyBindings(vm);
 	</script>
+	
 <%= include layoutBottom %>

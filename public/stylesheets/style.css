@@ -8,17 +8,17 @@ a {
   text-decoration: none;
 }
 
-table, tr, td, th {margin:0;border:0;padding:5px;border-collapse: collapse;}
+table, tr, td, th {margin: 0;border: 0;padding: 5px;border-collapse: collapse;}
 
 .localCam {
-	position: fixed;
-    top: 15px;
-    right: 15px;
+  display: inline-block;
+  top: 15px;
+  right: 15px;
 	float: right;
 }
 
 .localCam li {
-	display: inline-block;
+    list-style-type: none;
     border: 2px solid black;
     border-radius: 5px;
     text-align: center;
@@ -26,15 +26,16 @@ table, tr, td, th {margin:0;border:0;padding:5px;border-collapse: collapse;}
     padding: 5px 5px 5px 5px;
 }
 
+.localCam li:hover {
+  cursor: pointer;
+  background-color: #aaa;
+}
+
 .localCam video {
     border: 5px solid rgb(119, 119, 119);
     outline: 0px none;
     height: 240px;
     width: 320px;
-}
-
-.footer {
-   clear: both;
 }
 
 .starRating span { width:24px; height:24px; background-image: url('/images/stars.png'); display:inline-block; cursor: pointer; background-position: -24px 0; }
@@ -60,3 +61,6 @@ table, tr, td, th {margin:0;border:0;padding:5px;border-collapse: collapse;}
 	box-shadow:inset 1px 2px 6px #070707;
 }
 
+.footer {
+   clear: both;
+}
