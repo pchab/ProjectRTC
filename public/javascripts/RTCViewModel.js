@@ -19,7 +19,6 @@ ko.utils.extend(RTCStream.prototype, {
   }
 });
 
-
 // Revealing module pattern
 // View Model
 var RTCViewModel = function(client) {
@@ -57,8 +56,8 @@ var RTCViewModel = function(client) {
     }
     return -1;
   }
-  function refresh() {
-    // Load initial state from server
+  function loadStreamsFromServer() {
+    // Load JSON data from server
     $.getJSON("/streams", function(data) {
       var mappedStreams = [];
       for(var remoteId in data) {
@@ -76,6 +75,8 @@ var RTCViewModel = function(client) {
     });
   }
 
+  loadStreamsFromServer();
+
   return {
     streams: availableStreams,
     isStreaming: isStreaming,
@@ -87,7 +88,7 @@ var RTCViewModel = function(client) {
       }
     ),
 
-    refresh: refresh,
+    refresh: loadStreamsFromServer,
     rate: function(stream) {
       client.send('rate', {
         id: stream.id,
