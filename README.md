@@ -9,7 +9,7 @@
 The signaling part is done with [socket.io](socket.io).
 The client follows a MVVM pattern [knockoutjs](http://knockoutjs.com/)
 
-Most of the time, the latest version of the server is running [here](54.214.218.3:3000)
+Most of the time, the latest version of the server is running [here](http://54.214.218.3:3000)
 
 ## Install
 
