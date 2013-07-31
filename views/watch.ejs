@@ -18,10 +18,17 @@
       	};
 
 		client = new PeerManager();
-		getUserMedia(mediaConfig, client.setLocalStream, function () {
-          throw new Error('Failed to get access to local media.');
-        });
-		client.peerOffer(window.location.pathname.slice(1));		
+		getUserMedia(
+			mediaConfig, 
+			function(stream){
+				client.setLocalStream(stream);
+				client.peerOffer(window.location.pathname.slice(1));
+			},
+			function () {
+          		throw new Error('Failed to get access to local media.');
+        	}
+        );
+				
 	</script>
   </body>
 </html>
