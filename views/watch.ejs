@@ -9,7 +9,18 @@
   	<div id="remoteVideosContainer"></div>
   	
 	<script>
+		mediaConfig = {
+        	audio:true,
+        	video: {
+          		mandatory: {},
+          		optional: []
+        	}
+      	};
+
 		client = new PeerManager();
+		getUserMedia(mediaConfig, client.setLocalStream, function () {
+          throw new Error('Failed to get access to local media.');
+        });
 		client.peerOffer(window.location.pathname.slice(1));		
 	</script>
   </body>

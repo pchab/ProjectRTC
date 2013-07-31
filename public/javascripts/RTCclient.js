@@ -119,6 +119,8 @@ var PeerManager = (function () {
         if(!peerDatabase[remoteId]) {
           addPeer(remoteId);
         }
+        peer = peerDatabase[remoteId];
+        if(localStream) peer.pc.addStream(localStream);
         offer(remoteId);
       },
       
