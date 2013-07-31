@@ -6,6 +6,7 @@
 	<script type="text/javascript" src="javascripts/RTCclient.js"></script>
   </head>
   <body>
+  	<video id="localVideo"></video>
   	<div id="remoteVideosContainer"></div>
   	
 	<script>
@@ -21,6 +22,7 @@
 		getUserMedia(
 			mediaConfig, 
 			function(stream){
+				attachMediaStream(document.getElementById('localVideo'), stream);
 				client.setLocalStream(stream);
 				client.peerOffer(window.location.pathname.slice(1));
 			},
