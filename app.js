@@ -29,7 +29,7 @@ if ('development' == app.get('env')) {
 // routing
 app.get('/', routes.index);
 app.get('/streams', routes.streams);
-app.get('/:id', routes.watch);
+app.get('/:id', routes.call);
 
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

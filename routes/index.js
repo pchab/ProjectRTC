@@ -43,6 +43,6 @@ exports.streams = function(req, res) {
 };
 
 // GET <id> stream
-exports.watch = function(req,res) {
-  res.render('watch', { id: req.params.id});
+exports.call = function(req,res) {
+  res.render('call', { id: req.params.id});
 };
