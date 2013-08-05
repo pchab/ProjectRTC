@@ -46,7 +46,6 @@ var PeerManager = (function () {
           remoteVideosContainer.removeChild(peer.remoteVideoEl);
           peer.pc.close();
           delete peerDatabase.remoteId;
-          break;
       }
     }
 
