@@ -124,12 +124,12 @@ var PeerManager = (function () {
         localStream = stream;
       },
       
-      peerOffer: function(remoteId) {
+      peerOffer: function(remoteId, isPrivate) {
         if(!peerDatabase[remoteId]) {
           addPeer(remoteId);
         }
         peer = peerDatabase[remoteId];
-        if(localStream) peer.pc.addStream(localStream);
+        if(localStream && !isPrivate) peer.pc.addStream(localStream);
         offer(remoteId);
       },
       

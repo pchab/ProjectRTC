@@ -65,18 +65,18 @@ io.sockets.on('connection', function(client) {
       otherClient.emit('message', details);
   });
     
-  client.on('readyToStream', function(name) {
+  client.on('readyToStream', function(options) {
     console.log('-- ' + client.id + ' is ready to stream --');
-    var stream = new Stream(name);
-    routes.addStream(client.id, stream); 
+    var stream = new Stream(options.name);
+    routes.addStream(client.id, stream, options.privacy); 
   });
   
   client.on('rate', function(rating) {
     routes.rate(rating.id, client.id, rating.points);
   });
   
-  client.on('rename', function(name) {
-    routes.rename(client.id, name);
+  client.on('rename', function(options) {
+    routes.rename(client.id, options.name, options.privacy);
   });
 
   function leave() {

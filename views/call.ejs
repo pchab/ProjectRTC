@@ -27,7 +27,7 @@
 			function(stream){
 				attachMediaStream(document.getElementById('localVideo'), stream);
 				client.setLocalStream(stream);
-				client.peerOffer(window.location.pathname.slice(1));
+				client.peerOffer(window.location.pathname.slice(1), false);
 			},
 			function () {
           		throw new Error('Failed to get access to local media.');
