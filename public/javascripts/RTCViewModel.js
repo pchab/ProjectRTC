@@ -5,10 +5,6 @@ var RTCStream = function(id, data) {
   this.points = ko.observable();
   this.isPlaying = ko.observable(false);
 
-  this.state = ko.computed(function() {
-    return this.isPlaying() ? 'Playing' : 'Available';
-  }, this); 
-
   this.update(data);
 };
 
@@ -32,13 +28,17 @@ var RTCViewModel = function(client) {
       },
       availableStreams = ko.observable([]),
       isStreaming = ko.observable(false),
+      isPrivate = ko.observable(false),
       name = ko.observable('Guest'),
       link = ko.observable(),
       localVideoEl = document.getElementById('localVideo');
 
   ko.computed(function() {
     if(isStreaming()) {
-      client.send('rename', name());
+      client.send('rename', {
+                              name: name(),
+                              privacy: isPrivate()
+                            });
     }
   });
 
@@ -46,7 +46,11 @@ var RTCViewModel = function(client) {
     attachMediaStream(localVideoEl, stream);
     localVideoEl.muted = "muted";
     client.setLocalStream(stream);
-    client.send('readyToStream', name());
+    client.send('readyToStream', {
+                                    name: name(),
+                                    privacy: isPrivate()
+                                 }
+    );
     link(window.location.host + "/" + client.getId());
     isStreaming(true);
   }
@@ -80,6 +84,7 @@ var RTCViewModel = function(client) {
   return {
     streams: availableStreams,
     isStreaming: isStreaming,
+    isPrivate: isPrivate,
     name: name,
     link: link,
     localCamButtonText: ko.computed(
@@ -108,7 +113,7 @@ var RTCViewModel = function(client) {
       }
     },
     toggleRemoteVideo: function(stream) {
-      client.peerOffer(stream.id);
+      client.peerOffer(stream.id, isPrivate());
       stream.isPlaying(!stream.isPlaying());
       client.toggleVisibility(stream.id, stream.isPlaying());
     }
