@@ -42,8 +42,7 @@ var PeerManager = (function () {
       remoteVideosContainer.appendChild(peer.remoteVideoEl);
     };
     peer.pc.oniceconnectionstatechange = function(event) {
-      switch(event.srcElement.iceConnectionState) {
-        case 'disconnected':
+      if(event.srcElement.iceConnectionState == 'disconnected') {
           remoteVideosContainer.removeChild(peer.remoteVideoEl);
           peer.pc.close();
           delete peerDatabase.remoteId;
