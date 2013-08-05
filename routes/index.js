@@ -17,7 +17,7 @@ exports.removeStream = function(id) {
 
 // rate function
 exports.rate = function(id, rater, rating) {
-  var stream = streamList.public[id];
+  var stream = (streamList.public[id] || streamList.private[id]);
   if(stream.raters[rater] || stream.raters[rater] === null) {
     stream.rating += rating - stream.raters[rater];
   } else {
