@@ -8,6 +8,8 @@
   		<h2>Local Camera</h2>
 
   		<p>Username :<input data-bind="value: name" /></p>
+  		<p>Private :<input type="checkbox" data-bind="checked: isPrivate" /></p>
+
 		<video id="localVideo"></video>
 		<li data-bind="click: toggleLocalVideo">
 			<a href="#" data-bind="text: localCamButtonText"></a>
@@ -31,7 +33,7 @@
 
     	<thead>
     		<tr>
-        		<th>Stream</th><th>Status</th><th>Rating</th>
+        		<th>Stream</th><th>Rating</th>
    			</tr>
    		</thead>
     	<tbody data-bind="foreach: streams">
@@ -39,7 +41,6 @@
         		<td data-bind="css: { selected: isPlaying() }, click: $root.toggleRemoteVideo">
         			<a data-bind="text: name"></a>
         		</td>
-        		<td data-bind="text: state"></td>
         		<td data-bind="starRating: points, click: $root.rate"></td>
     		</tr>
 		</tbody>

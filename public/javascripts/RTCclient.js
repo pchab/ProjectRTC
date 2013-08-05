@@ -41,6 +41,15 @@ var PeerManager = (function () {
       attachMediaStream(peer.remoteVideoEl, event.stream);
       remoteVideosContainer.appendChild(peer.remoteVideoEl);
     };
+    peer.pc.oniceconnectionstatechange = function(event) {
+      switch(event.srcElement.iceConnectionState) {
+        case 'disconnected':
+          remoteVideosContainer.removeChild(peer.remoteVideoEl);
+          peer.pc.close();
+          delete peerDatabase.remoteId;
+          break;
+      }
+    }
 
     peerDatabase[remoteId] = peer;
         
@@ -115,10 +124,12 @@ var PeerManager = (function () {
         localStream = stream;
       },
       
-      peerOffer: function(remoteId) {
+      peerOffer: function(remoteId, isPrivate) {
         if(!peerDatabase[remoteId]) {
           addPeer(remoteId);
         }
+        peer = peerDatabase[remoteId];
+        if(localStream && !isPrivate) peer.pc.addStream(localStream);
         offer(remoteId);
       },
       
