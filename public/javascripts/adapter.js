@@ -1,5 +1,7 @@
 // normalize environment
 var RTCPeerConnection = null,
+    RTCSessionDescription = null,
+    RTCIceCandidate = null,
     getUserMedia = null,
     attachMediaStream = null,
     browser = null;

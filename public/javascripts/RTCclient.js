@@ -3,8 +3,10 @@ var PeerManager = (function () {
   var localId,
       config = {
         peerConnectionConfig: {
-          iceServers: [{"url": "stun:23.21.150.121"}
-                      ,{"url": "stun:stun.l.google.com:19302"}]
+          iceServers: [
+                        {"url": "stun:23.21.150.121"},
+                        {"url": "stun:stun.l.google.com:19302"}
+                      ]
         },
         peerConnectionConstraints: {
           optional: [{"DtlsSrtpKeyAgreement": true}]
@@ -41,13 +43,14 @@ var PeerManager = (function () {
       attachMediaStream(peer.remoteVideoEl, event.stream);
       remoteVideosContainer.appendChild(peer.remoteVideoEl);
     };
-    peer.pc.oniceconnectionstatechange = function(event) {
-      if(event.srcElement.iceConnectionState == 'disconnected') {
-          remoteVideosContainer.removeChild(peer.remoteVideoEl);
-          peer.pc.close();
-          delete peerDatabase.remoteId;
-      }
-    }
+    // peer.pc.oniceconnectionstatechange = function(event) {
+    //   ice = event.srcElement || event.target;
+    //   if(ice.iceConnectionState == 'disconnected') {
+    //       remoteVideosContainer.removeChild(peer.remoteVideoEl);
+    //       peer.pc.close();
+    //       delete peerDatabase.remoteId;
+    //   }
+    // }
 
     peerDatabase[remoteId] = peer;
         
@@ -105,7 +108,6 @@ var PeerManager = (function () {
         }
   }
   function send(type, to, payload) {
-    console.log('sending ' + type + ' to ' + to);
     connection.emit('message', {
       to: to,
       type: type,
