@@ -27,9 +27,10 @@ if ('development' == app.get('env')) {
 }
 
 // routing
-app.get('/', routes.index);
 app.get('/streams', routes.streams);
-app.get('/:id', routes.call);
+app.get('/streams/:id', routes.streams);
+app.get('/', routes.index);
+app.get('/:id', routes.index);
 
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
@@ -75,8 +76,8 @@ io.sockets.on('connection', function(client) {
     routes.rate(rating.id, client.id, rating.points);
   });
   
-  client.on('rename', function(options) {
-    routes.rename(client.id, options.name, options.privacy);
+  client.on('update', function(options) {
+    routes.update(client.id, options.name, options.privacy);
   });
 
   function leave() {

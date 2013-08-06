@@ -7,7 +7,7 @@ var streamList = {
 };
 
 exports.addStream = function(id, stream, isPrivate) {
-  isPrivate ? streamList.private[id] = stream  : streamList.public[id] =stream;
+  isPrivate ? streamList.private[id] = stream : streamList.public[id] = stream;
 };
 
 exports.removeStream = function(id) {
@@ -27,44 +27,39 @@ exports.rate = function(id, rater, rating) {
   stream.raters[rater] = rating;
 };
 
-// rename function
-exports.rename = function(id, name, isPrivate) {
-  if(isPrivate) {
-    if (!!streamList.public[id]){
-      // privacy setting has changed
-      streamList.private[id] = streamList.public[id];
-      delete streamList.public[id];
-    } else {
-      // else name has changed
-      streamList.private[id].name = name;
-    }
-  } else {
-    if(!!streamList.private[id]){
-      // privacy setting has changed
-      streamList.public[id] = streamList.private[id];
-      delete streamList.private[id];
-    } else {
-      // else name has changed
-      streamList.public[id].name = name;
-    }
-  }
+// update function
+exports.update = function(id, name, isPrivate) {
+  var stream = streamList.public[id] || streamList.private[id];
+  stream.name = name;
+  
+  this.removeStream(id);
+  
+  this.addStream(id, stream, isPrivate);
 };
 
 
 // GET home 
 exports.index = function(req, res) {
-  res.render('index', { title: 'Project RTC', 
-                        header: 'Web RTC live streaming',
-                        footer: 'by Pierre Chabardes'
+  res.render('index', { 
+                        title: 'Project RTC', 
+                        header: 'WebRTC live streaming',
+                        footer: 'by Pierre Chabardes',
+                        id: req.params.id
                       });
 };
 
 // GET streams as JSON
 exports.streams = function(req, res) {
-  res.json(200, streamList.public); 
-};
+  var id = req.params.id;
+  // JSON exploit to clone streamList
+  var data = (JSON.parse(JSON.stringify(streamList.public))); 
 
-// GET <id> stream
-exports.call = function(req,res) {
-  res.render('call', { id: req.params.id});
+  /* 
+   * if a specific id is requested, always add the stream even if private
+   */
+  if(!!id) {
+    data[id] = streamList.public[id] || streamList.private[id];
+  } 
+
+  res.json(200, data);
 };

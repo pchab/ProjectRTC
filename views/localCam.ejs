@@ -1,0 +1,19 @@
+<div class="localCam">
+
+	<h2>Local Camera</h2>
+
+	<p>Username :<input data-bind="value: name" /></p>
+	<p>Private :<input type="checkbox" data-bind="checked: isPrivate" /></p>
+
+	<video id="localVideo"></video>
+	<li data-bind="click: toggleLocalVideo">
+		<a href="#" data-bind="text: localCamButtonText"></a>
+	</li>
+
+	<div data-bind="visible: isStreaming">
+		
+		<p>Share this link :</p>
+		<a data-bind="text: link"></a>
+
+	</div>
+</div>

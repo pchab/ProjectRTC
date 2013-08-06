@@ -15,10 +15,10 @@ ko.utils.extend(RTCStream.prototype, {
   }
 });
 
-// Revealing module pattern
 // View Model
-var RTCViewModel = function(client) {
+var RTCViewModel = function(client, path) {
   var client = client,
+      path = path,
       mediaConfig = {
         audio:true,
         video: {
@@ -30,17 +30,17 @@ var RTCViewModel = function(client) {
       isStreaming = ko.observable(false),
       isPrivate = ko.observable(false),
       name = ko.observable('Guest'),
-      link = ko.observable(),
       localVideoEl = document.getElementById('localVideo');
 
+  // push changes to server
   ko.computed(function() {
     if(isStreaming()) {
-      client.send('rename', {
+      client.send('update', {
                               name: name(),
                               privacy: isPrivate()
                             });
     }
-  });
+  }).extend({throttle: 500});
 
   function getReadyToStream(stream) {
     attachMediaStream(localVideoEl, stream);
@@ -51,27 +51,25 @@ var RTCViewModel = function(client) {
                                     privacy: isPrivate()
                                  }
     );
-    link(window.location.host + "/" + client.getId());
     isStreaming(true);
   }
   function getStreamById(id) {
     for(var i=0; i<availableStreams().length;i++) {
-      if (availableStreams()[i].id === id) {return i;}
+      if (availableStreams()[i].id === id) {return availableStreams()[i];}
     }
-    return -1;
   }
   function loadStreamsFromServer() {
     // Load JSON data from server
-    $.getJSON("/streams", function(data) {
+    $.getJSON(path, function(data) {
       var mappedStreams = [];
       for(var remoteId in data) {
         if(remoteId !== client.getId()) {
-          var streamIndex = getStreamById(remoteId);
-          if(streamIndex === -1) {
-            mappedStreams.push(new RTCStream(remoteId, data[remoteId]));
+          var stream = getStreamById(remoteId);
+          if(!!stream) {
+            stream.update(data[remoteId]);
+            mappedStreams.push(stream);
           } else {
-            availableStreams()[streamIndex].update(data[remoteId]);
-            mappedStreams.push(availableStreams()[streamIndex]);
+            mappedStreams.push(new RTCStream(remoteId, data[remoteId]));
           }
         }
       }
@@ -79,14 +77,14 @@ var RTCViewModel = function(client) {
     });
   }
 
-  loadStreamsFromServer();
-
   return {
     streams: availableStreams,
     isStreaming: isStreaming,
     isPrivate: isPrivate,
     name: name,
-    link: link,
+    link: ko.computed(function() {
+      return window.location.host + "/" + client.getId();
+    }),
     localCamButtonText: ko.computed(
       function() {
         return isStreaming() ? "Stop" : "Start";
