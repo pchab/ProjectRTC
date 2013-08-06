@@ -48,7 +48,7 @@ table, tr, td, th {margin: 0;border: 0;padding: 5px;border-collapse: collapse;}
 	text-align: center;
 }
 
-.remoteStreams tr:hover {
+.remoteStreams td:hover {
 	cursor: pointer;
 	background-color: #aaa;
 }
