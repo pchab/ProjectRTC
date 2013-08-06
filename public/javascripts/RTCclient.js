@@ -43,14 +43,14 @@ var PeerManager = (function () {
       attachMediaStream(peer.remoteVideoEl, event.stream);
       remoteVideosContainer.appendChild(peer.remoteVideoEl);
     };
-    // peer.pc.oniceconnectionstatechange = function(event) {
-    //   ice = event.srcElement || event.target;
-    //   if(ice.iceConnectionState == 'disconnected') {
-    //       remoteVideosContainer.removeChild(peer.remoteVideoEl);
-    //       peer.pc.close();
-    //       delete peerDatabase.remoteId;
-    //   }
-    // }
+    peer.pc.oniceconnectionstatechange = function(event) {
+      ice = event.srcElement || event.target;
+      if(ice.iceConnectionState == 'disconnected') {
+          remoteVideosContainer.removeChild(peer.remoteVideoEl);
+          peer.pc.close();
+          delete peerDatabase.remoteId;
+      }
+    }
 
     peerDatabase[remoteId] = peer;
         
