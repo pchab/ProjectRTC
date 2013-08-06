@@ -30,6 +30,7 @@ var RTCViewModel = function(client, path) {
       isStreaming = ko.observable(false),
       isPrivate = ko.observable(false),
       name = ko.observable('Guest'),
+      link = ko.observable(),
       localVideoEl = document.getElementById('localVideo');
 
   // push changes to server
@@ -51,6 +52,7 @@ var RTCViewModel = function(client, path) {
                                     privacy: isPrivate()
                                  }
     );
+    link(window.location.host + "/" + client.getId()); 
     isStreaming(true);
   }
   function getStreamById(id) {
@@ -82,9 +84,7 @@ var RTCViewModel = function(client, path) {
     isStreaming: isStreaming,
     isPrivate: isPrivate,
     name: name,
-    link: ko.computed(function() {
-      return window.location.host + "/" + client.getId();
-    }),
+    link: link,
     localCamButtonText: ko.computed(
       function() {
         return isStreaming() ? "Stop" : "Start";
