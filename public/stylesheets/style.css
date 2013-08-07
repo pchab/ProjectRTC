@@ -16,12 +16,6 @@ table, tr, td, th {margin: 0;border: 0;padding: 5px;border-collapse: collapse;}
   right: 15px;
 	float: right;
 }
-.remoteStreams{
-  display: inline-block;
-  top: 15px;
-  right: 15px;
-  float: left;
-}
 
 .localCam video {
     border: 5px solid rgb(119, 119, 119);
@@ -42,6 +36,13 @@ table, tr, td, th {margin: 0;border: 0;padding: 5px;border-collapse: collapse;}
 .localCam li:hover {
   cursor: pointer;
   background-color: #aaa;
+}
+
+.remoteStreams{
+  display: inline-block;
+  top: 15px;
+  right: 15px;
+  float: left;
 }
 
 .remoteStreams table{

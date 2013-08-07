@@ -63,18 +63,23 @@ var RTCViewModel = function(client, path) {
   function loadStreamsFromServer() {
     // Load JSON data from server
     $.getJSON(path, function(data) {
+
       var mappedStreams = [];
       for(var remoteId in data) {
-        if(remoteId !== client.getId()) {
-          var stream = getStreamById(remoteId);
-          if(!!stream) {
-            stream.update(data[remoteId]);
-            mappedStreams.push(stream);
-          } else {
+        var stream = getStreamById(remoteId);
+
+        // if stream is known, keep its state and update it
+        if(!!stream) {
+          stream.update(data[remoteId]);
+          mappedStreams.push(stream);
+        // else create a new stream (escape own stream)
+        } else {
+          if(remoteId !== client.getId()) {
             mappedStreams.push(new RTCStream(remoteId, data[remoteId]));
           }
         }
       }
+
       availableStreams(mappedStreams);
     });
   }
@@ -111,9 +116,8 @@ var RTCViewModel = function(client, path) {
       }
     },
     toggleRemoteVideo: function(stream) {
-      client.peerOffer(stream.id, isPrivate());
+      client.peerInit(stream.id);
       stream.isPlaying(!stream.isPlaying());
-      client.toggleVisibility(stream.id, stream.isPlaying());
     }
   }
 };

@@ -5,43 +5,42 @@ var RTCPeerConnection = null,
     browser = null;
 
 if (navigator.mozGetUserMedia) {
-    browser = "firefox";
+  browser = "firefox";
 
-    // The RTCPeerConnection object.
-    RTCPeerConnection = mozRTCPeerConnection;
+  // The RTCPeerConnection object.
+  RTCPeerConnection = mozRTCPeerConnection;
 
-    // The RTCSessionDescription object.
-    RTCSessionDescription = mozRTCSessionDescription;
+  // The RTCSessionDescription object.
+  RTCSessionDescription = mozRTCSessionDescription;
 
-    // The RTCIceCandidate object.
-    RTCIceCandidate = mozRTCIceCandidate;
+  // The RTCIceCandidate object.
+  RTCIceCandidate = mozRTCIceCandidate;
 
-    // Get UserMedia (only difference is the prefix).
-    // Code from Adam Barth.
-    getUserMedia = navigator.mozGetUserMedia.bind(navigator);
+  // Get UserMedia (only difference is the prefix).
+  // Code from Adam Barth.
+  getUserMedia = navigator.mozGetUserMedia.bind(navigator);
 
-    // Attach a media stream to an element.
-    attachMediaStream = function(element, stream) {
-        element.mozSrcObject = stream;
-        element.controls = 'controls';
-        element.play();
-    };
+  // Attach a media stream to an element.
+  attachMediaStream = function(element, stream) {
+    element.mozSrcObject = stream;
+    element.play();
+  };
 } else if (navigator.webkitGetUserMedia) {
-    browser = "chrome";
+  browser = "chrome";
 
-    // The RTCPeerConnection object.
-    RTCPeerConnection = webkitRTCPeerConnection;
+  // The RTCPeerConnection object.
+  RTCPeerConnection = webkitRTCPeerConnection;
 
-    // Get UserMedia (only difference is the prefix).
-    // Code from Adam Barth.
-    getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
+  // Get UserMedia (only difference is the prefix).
+  // Code from Adam Barth.
+  getUserMedia = navigator.webkitGetUserMedia.bind(navigator);
 
-    // Attach a media stream to an element.
-    attachMediaStream = function(element, stream) {
-        element.autoplay = true;
-        element.controls = 'controls';
-        element.src = webkitURL.createObjectURL(stream);
-    };
+  // Attach a media stream to an element.
+  attachMediaStream = function(element, stream) {
+    element.autoplay = true;
+    element.src = webkitURL.createObjectURL(stream);
+  };
+
 } else {
-    throw new Error("Browser does not appear to be WebRTC-capable");
+  throw new Error("Browser does not appear to be WebRTC-capable");
 }
