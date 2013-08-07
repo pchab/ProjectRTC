@@ -87,6 +87,8 @@ var PeerManager = (function () {
     var type = message.type,
         from = message.from,
         peer = peerDatabase[from] || addPeer(from);
+
+    console.log('received ' + type + ' from ' + from);
   
     switch (type) {
       case 'init':
@@ -112,6 +114,7 @@ var PeerManager = (function () {
     }
   }
   function send(type, to, payload) {
+    console.log('sending ' + type + ' to ' + to);
     connection.emit('message', {
       to: to,
       type: type,
@@ -125,23 +128,23 @@ var PeerManager = (function () {
   }
 
   return {
-      getId: function() {
-        return localId;
-      },
-      
-      setLocalStream: function(stream) {
-        localStream = stream;
-      },
-      
-      peerInit: function(remoteId) {
-        peer = peerDatabase[remoteId] || addPeer(remoteId);
-        setLocalStream(peer);
-        send('init', remoteId, null);
-      },
+    getId: function() {
+      return localId;
+    },
+    
+    setLocalStream: function(stream) {
+      localStream = stream;
+    },
+    
+    peerInit: function(remoteId) {
+      peer = peerDatabase[remoteId] || addPeer(remoteId);
+      setLocalStream(peer);
+      send('init', remoteId, null);
+    },
 
-      send: function(type, payload) {
-        connection.emit(type, payload);
-      }
+    send: function(type, payload) {
+      connection.emit(type, payload);
+    }
   };
   
 });
