@@ -10,7 +10,7 @@
 		<a href="#" data-bind="text: localCamButtonText"></a>
 	</li>
 
-	<div data-bind="visible: isStreaming">
+	<div data-bind="visible: isStreaming && isPrivate">
 		
 		<p>Share this link :</p>
 		<a data-bind="text: link"></a>
