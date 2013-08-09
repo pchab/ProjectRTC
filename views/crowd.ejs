@@ -1,0 +1,26 @@
+<%= include layoutTop %>
+
+	<div id="remoteVideosContainer"></div>
+
+	<script>
+		client = new PeerManager();
+		streams = {};
+
+	  setInterval(function() {
+	    // Load JSON data from server
+	    $.getJSON('/streams', function(data) {
+
+	      for(var remoteId in data) {
+	        var stream = streams[remoteId];
+	        if(!stream) {
+	          client.peerInit(remoteId);
+	          streams[remoteId] = data;
+	        } 
+	      }
+	    });
+	  }, 1000);
+
+	</script>
+	
+<%= include layoutBottom %>
+

@@ -45,7 +45,6 @@ var RTCViewModel = function(client, path) {
 
   function getReadyToStream(stream) {
     attachMediaStream(localVideoEl, stream);
-    localVideoEl.muted = "muted";
     client.setLocalStream(stream);
     client.send('readyToStream', {
                                     name: name(),

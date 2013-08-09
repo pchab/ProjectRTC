@@ -49,6 +49,14 @@ exports.index = function(req, res) {
                       });
 };
 
+// GET home 
+exports.crowd = function(req, res) {
+  res.render('crowd', { 
+                        title: 'Project RTC', 
+                        footer: 'by Pierre Chabardes'
+                      });
+};
+
 // GET streams as JSON
 exports.streams = function(req, res) {
   var id = req.params.id;
