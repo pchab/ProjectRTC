@@ -37,8 +37,8 @@ if (navigator.mozGetUserMedia) {
 
   // Attach a media stream to an element.
   attachMediaStream = function(element, stream) {
-    element.autoplay = true;
     element.src = webkitURL.createObjectURL(stream);
+    element.autoplay = true;
   };
 
 } else {
