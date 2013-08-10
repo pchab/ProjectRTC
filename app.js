@@ -30,6 +30,7 @@ if ('development' == app.get('env')) {
 app.get('/streams', routes.streams);
 app.get('/streams/:id', routes.streams);
 app.get('/crowd', routes.crowd);
+app.get('/join', routes.join);
 app.get('/', routes.index);
 app.get('/:id', routes.index);
 
