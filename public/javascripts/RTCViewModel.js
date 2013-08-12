@@ -126,6 +126,7 @@ var RTCViewModel = function(client, path) {
                       function (stream) {
                         getReadyToStream(stream);
                         client.pushStream(remoteId);
+                        getStreamById(remoteId).isPlaying(true);
                       }, 
                       function () {
                         throw new Error('Failed to get access to local media.');
