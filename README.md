@@ -11,6 +11,8 @@ The client follows a MVVM pattern [knockoutjs](http://knockoutjs.com/)
 
 Most of the time, the latest version of the server is running [here](http://54.214.218.3:3000)
 
+Firefox is not fully supported yet : https://bugzilla.mozilla.org/show_bug.cgi?id=844295
+
 ## Install
 
 It requires [node.js](http://nodejs.org/download/)

@@ -10,7 +10,7 @@ var PeerManager = (function () {
         },
         peerConnectionConstraints: {
           optional: [
-                     // {"DtlsSrtpKeyAgreement": (browser === 'firefox')}
+                     {"DtlsSrtpKeyAgreement": (browser === 'firefox')}
                     ]
         },
         mediaConstraints: {
@@ -98,7 +98,7 @@ var PeerManager = (function () {
   
     switch (type) {
       case 'init':
-        setLocalStream(pc);
+        toggleLocalStream(pc);
         offer(from);
         break;
       case 'offer':
@@ -128,7 +128,7 @@ var PeerManager = (function () {
       payload: payload
     });
   }
-  function setLocalStream(pc) {
+  function toggleLocalStream(pc) {
     if(localStream) {
       (!!pc.getLocalStreams().length) ? pc.removeStream(localStream) : pc.addStream(localStream);
     }
