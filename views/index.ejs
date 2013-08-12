@@ -9,6 +9,7 @@
 	<script>
 		client = new PeerManager();
 		vm = new RTCViewModel(client, "/streams/<%- id %>");
+		vm.refresh();
 		setInterval(vm.refresh, 1000);
 		ko.applyBindings(vm);
 
