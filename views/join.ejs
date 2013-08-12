@@ -1,0 +1,31 @@
+<%= include layoutTop %>
+
+	<input type="button" onclick="toggleLocalVideo()" value="Join the crowd !">
+
+	<script>
+		client = new PeerManager();
+
+		function toggleLocalVideo() {
+	        getUserMedia({
+					        audio:true,
+					        video: {
+					          mandatory: {},
+					          optional: []
+					        }
+      					}, getReadyToStream, 
+      					function () {
+	          				throw new Error('Failed to get access to local media.');
+	        });
+	    };
+
+	    function getReadyToStream(stream) {
+		    client.setLocalStream(stream);
+		    client.send('readyToStream', {
+		                                    name: 'groupie',
+		                                    privacy: false
+		                                 }
+		    );
+  		};
+	</script>
+	
+<%= include layoutBottom %>

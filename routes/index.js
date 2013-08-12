@@ -1,5 +1,6 @@
 /**
- * JSON storing available streams
+ * available streams 
+ * the id key is considered unique (provided by socket.io)
  */
 var streamList = {
   public: {},
@@ -21,7 +22,7 @@ exports.rate = function(id, rater, rating) {
   if(stream.raters[rater] || stream.raters[rater] === null) {
     stream.rating += rating - stream.raters[rater];
   } else {
-    stream.votes +=1;
+    stream.votes++;
     stream.rating += rating;
   }
   stream.raters[rater] = rating;
@@ -48,10 +49,26 @@ exports.index = function(req, res) {
                       });
 };
 
+// GET crowd
+exports.crowd = function(req, res) {
+  res.render('crowd', { 
+                        title: 'Project RTC', 
+                        footer: 'by Pierre Chabardes'
+                      });
+};
+
+// GET join
+exports.join = function(req, res) {
+  res.render('join', { 
+                        title: 'Project RTC', 
+                        footer: 'by Pierre Chabardes'
+                      });
+};
+
 // GET streams as JSON
 exports.streams = function(req, res) {
   var id = req.params.id;
-  // JSON exploit to clone streamList
+  // JSON exploit to clone streamList.public
   var data = (JSON.parse(JSON.stringify(streamList.public))); 
 
   /* 

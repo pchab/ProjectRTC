@@ -9,7 +9,9 @@ var PeerManager = (function () {
                       ]
         },
         peerConnectionConstraints: {
-          optional: [{"DtlsSrtpKeyAgreement": true}]
+          optional: [
+                     // {"DtlsSrtpKeyAgreement": (browser === 'firefox')}
+                    ]
         },
         mediaConstraints: {
           'mandatory': {
@@ -43,15 +45,20 @@ var PeerManager = (function () {
       attachMediaStream(peer.remoteVideoEl, event.stream);
       remoteVideosContainer.appendChild(peer.remoteVideoEl);
     };
+    peer.pc.onremovestream = function(event) {
+      peer.remoteVideoEl.src = '';
+      remoteVideosContainer.removeChild(peer.remoteVideoEl);
+    };
     peer.pc.oniceconnectionstatechange = function(event) {
-      ice = event.srcElement || event.target;
-      if(ice.iceConnectionState == 'disconnected') {
+      switch(
+      (  event.srcElement // Chrome
+      || event.target   ) // Firefox
+      .iceConnectionState) {
+        case 'disconnected':
           remoteVideosContainer.removeChild(peer.remoteVideoEl);
-          peer.pc.close();
-          delete peerDatabase.remoteId;
+          break;
       }
-    }
-
+    };
     peerDatabase[remoteId] = peer;
         
     return peer;
@@ -83,64 +90,79 @@ var PeerManager = (function () {
     );
   }
   function handleMessage(message) {
-        var type = message.type,
-            from = message.from,
-            peer = peerDatabase[from] || addPeer(from);
-      
-        switch (type) {
-          case 'offer':
-            peer.pc.getLocalStreams().length ? peer.pc.removeStream(localStream) : peer.pc.addStream(localStream);
-            peer.pc.setRemoteDescription(new RTCSessionDescription(message.payload));
-            answer(from);
-            break;
-          case 'answer':
-            peer.pc.setRemoteDescription(new RTCSessionDescription(message.payload));
-            break;
-          case 'candidate':
-            if(peer.pc.remoteDescription) {
-              peer.pc.addIceCandidate(new RTCIceCandidate({
-                sdpMLineIndex: message.payload.label,
-                sdpMid: message.payload.id,
-                candidate: message.payload.candidate
-              }));
-            }
-            break;
+    var type = message.type,
+        from = message.from,
+        pc = (peerDatabase[from] || addPeer(from)).pc;
+
+    console.log('received ' + type + ' from ' + from);
+  
+    switch (type) {
+      case 'init':
+        setLocalStream(pc);
+        offer(from);
+        break;
+      case 'offer':
+        pc.setRemoteDescription(new RTCSessionDescription(message.payload));
+        answer(from);
+        break;
+      case 'answer':
+        pc.setRemoteDescription(new RTCSessionDescription(message.payload));
+        break;
+      case 'candidate':
+        if(pc.remoteDescription) {
+          pc.addIceCandidate(new RTCIceCandidate({
+            sdpMLineIndex: message.payload.label,
+            sdpMid: message.payload.id,
+            candidate: message.payload.candidate
+          }));
         }
+        break;
+    }
   }
   function send(type, to, payload) {
+    console.log('sending ' + type + ' to ' + to);
+
     connection.emit('message', {
       to: to,
       type: type,
       payload: payload
     });
   }
+  function setLocalStream(pc) {
+    if(localStream) {
+      (!!pc.getLocalStreams().length) ? pc.removeStream(localStream) : pc.addStream(localStream);
+    }
+  }
 
   return {
-      getId: function() {
-        return localId;
-      },
-      
-      setLocalStream: function(stream) {
-        localStream = stream;
-      },
-      
-      peerOffer: function(remoteId, isPrivate) {
-        if(!peerDatabase[remoteId]) {
-          addPeer(remoteId);
+    getId: function() {
+      return localId;
+    },
+    
+    setLocalStream: function(stream) {
+
+      // if local cam has been stopped, remove it from all outgoing streams.
+      if(!stream) {
+        for(id in peerDatabase) {
+          pc = peerDatabase[id].pc;
+          if(!!pc.getLocalStreams().length) {
+            pc.removeStream(localStream);
+            offer(id);
+          }
         }
-        peer = peerDatabase[remoteId];
-        if(localStream && !isPrivate) peer.pc.addStream(localStream);
-        offer(remoteId);
-      },
-      
-      toggleVisibility: function(remoteId, flag) {
-        var peer = peerDatabase[remoteId];
-        peer.remoteVideoEl.style.display = flag ? '' : 'none';
-      },
-      
-      send: function(type, payload) {
-        connection.emit(type, payload);
       }
+
+      localStream = stream;
+    },
+    
+    peerInit: function(remoteId) {
+      peer = peerDatabase[remoteId] || addPeer(remoteId);
+      send('init', remoteId, null);
+    },
+
+    send: function(type, payload) {
+      connection.emit(type, payload);
+    }
   };
   
 });
@@ -148,4 +170,5 @@ var PeerManager = (function () {
 var Peer = function (pcConfig, pcConstraints) {
   this.pc = new RTCPeerConnection(pcConfig, pcConstraints);
   this.remoteVideoEl = document.createElement('video');
+  this.remoteVideoEl.controls = true;
 }
