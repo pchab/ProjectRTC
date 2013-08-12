@@ -14,7 +14,7 @@
 
 		<% if(!!id) { %>
 			vm.toggleLocalVideo();
-			client.peerOffer("<%- id %>");
+			client.peerInit("<%- id %>");
 		<% } %>
 	</script>
 	
