@@ -140,6 +140,18 @@ var PeerManager = (function () {
     },
     
     setLocalStream: function(stream) {
+
+      // if local cam has been stopped, remove it from all outgoing streams.
+      if(!stream) {
+        for(id in peerDatabase) {
+          pc = peerDatabase[id].pc;
+          if(!!pc.getLocalStreams().length) {
+            pc.removeStream(localStream);
+            offer(id);
+          }
+        }
+      }
+
       localStream = stream;
     },
     
