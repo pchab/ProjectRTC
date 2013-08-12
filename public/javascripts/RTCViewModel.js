@@ -117,6 +117,20 @@ var RTCViewModel = function(client, path) {
     toggleRemoteVideo: function(stream) {
       client.peerInit(stream.id);
       stream.isPlaying(!stream.isPlaying());
+    },
+
+    startPrivateCall: function(remoteId) {
+        isPrivate(true);
+        getUserMedia(
+                      mediaConfig, 
+                      function (stream) {
+                        getReadyToStream(stream);
+                        client.pushStream(remoteId);
+                      }, 
+                      function () {
+                        throw new Error('Failed to get access to local media.');
+                      }
+        );
     }
   }
 };

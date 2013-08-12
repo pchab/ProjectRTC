@@ -13,7 +13,7 @@
 		ko.applyBindings(vm);
 
 		<% if(!!id) { %>
-			vm.toggleLocalVideo();
+			vm.startPrivateCall("<%- id %>");
 		<% } %>
 	</script>
 	
