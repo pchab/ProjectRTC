@@ -44,7 +44,7 @@ exports.index = function(req, res) {
   res.render('index', { 
                         title: 'Project RTC', 
                         header: 'WebRTC live streaming',
-                        footer: 'by Pierre Chabardes',
+                        footer: 'pierre@chabardes.net',
                         id: req.params.id
                       });
 };
@@ -53,7 +53,7 @@ exports.index = function(req, res) {
 exports.crowd = function(req, res) {
   res.render('crowd', { 
                         title: 'Project RTC', 
-                        footer: 'by Pierre Chabardes'
+                        footer: ''
                       });
 };
 
@@ -61,7 +61,7 @@ exports.crowd = function(req, res) {
 exports.join = function(req, res) {
   res.render('join', { 
                         title: 'Project RTC', 
-                        footer: 'by Pierre Chabardes'
+                        footer: ''
                       });
 };
 
