@@ -162,6 +162,12 @@ var PeerManager = (function () {
 
     send: function(type, payload) {
       connection.emit(type, payload);
+    }, 
+
+    pushStream: function(remoteId) {
+      peer = peerDatabase[remoteId] || addPeer(remoteId);
+      toggleLocalStream(peer.pc);
+      send('init', remoteId, null);
     }
   };
   
