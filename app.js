@@ -2,7 +2,6 @@
  * Module dependencies.
  */
 var express = require('express')
-  , routes = require('./routes')
   , http = require('http')
   , path = require('path');
 
@@ -27,66 +26,13 @@ if ('development' == app.get('env')) {
 }
 
 // routing
-app.get('/streams', routes.streams);
-app.get('/streams/:id', routes.streams);
-app.get('/crowd', routes.crowd);
-app.get('/join', routes.join);
-app.get('/', routes.index);
-app.get('/:id', routes.index);
+require('./app/routes.js')(app);
 
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
 /**
- * Stream object
- *
- * Stored in JSON using socket.id as key
- */
-function Stream(name) {
-  this.name = name;
-  this.rating = 0;
-  this.votes = 0;
-  this.raters = {};
-}
-
-/**
  * Socket.io event handling
  */
-io.sockets.on('connection', function(client) {
-  console.log('-- ' + client.id + ' joined --');
-  client.emit('id', client.id);
-
-  client.on('message', function (details) {
-    var otherClient = io.sockets.sockets[details.to];
-
-    if (!otherClient) {
-      return;
-    }
-      delete details.to;
-      details.from = client.id;
-      otherClient.emit('message', details);
-  });
-    
-  client.on('readyToStream', function(options) {
-    console.log('-- ' + client.id + ' is ready to stream --');
-    var stream = new Stream(options.name);
-    routes.addStream(client.id, stream, options.privacy); 
-  });
-  
-  client.on('rate', function(rating) {
-    routes.rate(rating.id, client.id, rating.points);
-  });
-  
-  client.on('update', function(options) {
-    routes.update(client.id, options.name, options.privacy);
-  });
-
-  function leave() {
-    console.log('-- ' + client.id + ' left --');
-    routes.removeStream(client.id);
-  }
-
-  client.on('disconnect', leave);
-  client.on('leave', leave);
-});
+io.sockets.on('connection', require('./app/socketHandler.js')(io.sockets, client));
