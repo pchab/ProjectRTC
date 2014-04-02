@@ -3,7 +3,8 @@
  */
 var express = require('express')
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  , streams = require('./app/streams.js')();
 
 var app = express()
   , server = http.createServer(app)
@@ -26,13 +27,13 @@ if ('development' == app.get('env')) {
 }
 
 // routing
-require('./app/routes.js')(app);
-
-server.listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
-});
+require('./app/routes.js')(app, streams);
 
 /**
  * Socket.io event handling
  */
-io.sockets.on('connection', require('./app/socketHandler.js')(io.sockets, client));
+require('./app/socketHandler.js')(io, streams);
+
+server.listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));
+});

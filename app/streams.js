@@ -1,5 +1,14 @@
 module.exports = function() {
   /**
+   * available streams 
+   * the id key is considered unique (provided by socket.io)
+   */
+  var streamList = {
+    public: {},
+    private: {}
+  };
+
+  /**
    * Stream object
    *
    * Stored in JSON using socket.id as key
@@ -11,18 +20,9 @@ module.exports = function() {
     this.raters = {};
   }
 
-  /**
-   * available streams 
-   * the id key is considered unique (provided by socket.io)
-   */
-  var streamList = {
-    public: {},
-    private: {}
-  };
-
   return {
-    addStream : function(id, isPrivate) {
-      var stream = new Stream(options.name);
+    addStream : function(id, name, isPrivate) {
+      var stream = new Stream(name);
       isPrivate ? streamList.private[id] = stream : streamList.public[id] = stream;
     },
 
