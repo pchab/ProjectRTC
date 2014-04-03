@@ -29,7 +29,7 @@ var RTCViewModel = function(client, path) {
       availableStreams = ko.observable([]),
       isStreaming = ko.observable(false),
       isPrivate = ko.observable(false),
-      name = ko.observable('Guest'),
+      name = ko.observable('newStream'),
       link = ko.observable(),
       localVideoEl = document.getElementById('localVideo');
 

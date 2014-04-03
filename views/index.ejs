@@ -1,21 +1,13 @@
-<%= include layoutTop %>
-  
-  	<h1><%= header %></h1>
-  	
-  	<%= include localCam %>
+<!-- views/index.ejs -->
+<%= include logTop %>
 
-	<%= include remoteStreams %>
+	<div class="jumbotron text-center">
+		<h1><span class="fa fa-lock"></span> <%= title %></h1>
 
-	<script>
-		client = new PeerManager();
-		vm = new RTCViewModel(client, "/streams/<%- id %>");
-		vm.refresh();
-		setInterval(vm.refresh, 1000);
-		ko.applyBindings(vm);
+		<p>Login or Register :</p>
 
-		<% if(!!id) { %>
-			vm.startPrivateCall("<%- id %>");
-		<% } %>
-	</script>
-	
-<%= include layoutBottom %>
+		<a href="/login" class="btn btn-default"><span class="fa fa-user"></span>Login</a>
+		<a href="/signup" class="btn btn-default"><span class="fa fa-user"></span>Signup</a>
+	</div>
+
+<%= include logBottom %>

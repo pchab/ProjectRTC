@@ -15,6 +15,11 @@
     "express": "3.2.5",
     "ejs": "*",
     "socket.io": "~0.9",
-    "forever": "0.10.8"
+    "forever": "0.10.8",
+    "mongoose" : "~3.8.1",      
+    "passport" : "~0.1.17",     
+    "passport-local" : "~0.1.6",
+    "connect-flash" : "~0.1.1",   
+    "bcrypt-nodejs" : "latest"
   }
 }

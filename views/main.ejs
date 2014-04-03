@@ -1,0 +1,21 @@
+<%= include layoutTop %>
+  
+  	<h1><%= header %></h1>
+  	<h2>Hello <%= user %></h2>
+  	
+  	<%= include localCam %>
+
+	<%= include remoteStreams %>
+
+	<script>
+		client = new PeerManager();
+		vm = new RTCViewModel(client, "/streams/<%- id %>");
+		vm.refresh();
+		ko.applyBindings(vm);
+
+		<% if(!!id) { %>
+			vm.startPrivateCall("<%- id %>");
+		<% } %>
+	</script>
+	
+<%= include layoutBottom %>

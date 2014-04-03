@@ -21,6 +21,14 @@ It requires [node.js](http://nodejs.org/download/)
 The server will run on port 3000.
 You can test it in the (Chrome) browser at localhost:3000.
 
+## User Database
+
+Using a local MongoDB
+
+* mongod --dbpath ./data --port 1664
+
+You can configure the url in /config/database.js
+
 ## Author
 
 - Pierre Chabardes
