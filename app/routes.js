@@ -42,17 +42,9 @@ module.exports = function(app, streams, passport) {
 
   // GET streams as JSON
   var displayStreams = function(req, res) {
-    var id = req.params.id;
     var streamList = streams.getStreams();
     // JSON exploit to clone streamList.public
-    var data = (JSON.parse(JSON.stringify(streamList.public))); 
-
-    /* 
-     * if a specific id is requested, always add the stream even if private
-     */
-    if(!!id) {
-      data[id] = streamList.public[id] || streamList.private[id];
-    } 
+    var data = (JSON.parse(JSON.stringify(streamList))); 
 
     res.json(200, data);
   };
@@ -69,9 +61,7 @@ module.exports = function(app, streams, passport) {
   }
 
   app.get('/streams', displayStreams);
-  app.get('/streams/:id', displayStreams);
   app.get('/main', isLoggedIn, main);
-  app.get('/main/:id', isLoggedIn, main);
   app.get('/login', login);
   // process the login form
   app.post('/login', passport.authenticate('local-login', {
@@ -88,4 +78,5 @@ module.exports = function(app, streams, passport) {
     failureFlash    : true       // allow flash messages
   }));
   app.get('/', index);
+  app.get('/:id', isLoggedIn, main);
 }

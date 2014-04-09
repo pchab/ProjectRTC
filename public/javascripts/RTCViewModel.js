@@ -28,7 +28,6 @@ var RTCViewModel = function(client, path) {
       },
       availableStreams = ko.observable([]),
       isStreaming = ko.observable(false),
-      isPrivate = ko.observable(false),
       name = ko.observable('newStream'),
       link = ko.observable(),
       localVideoEl = document.getElementById('localVideo');
@@ -37,8 +36,7 @@ var RTCViewModel = function(client, path) {
   ko.computed(function() {
     if(isStreaming()) {
       client.send('update', {
-                              name: name(),
-                              privacy: isPrivate()
+                              name: name()
                             });
     }
   }).extend({throttle: 500});
@@ -47,8 +45,7 @@ var RTCViewModel = function(client, path) {
     attachMediaStream(localVideoEl, stream);
     client.setLocalStream(stream);
     client.send('readyToStream', {
-                                    name: name(),
-                                    privacy: isPrivate()
+                                    name: name()
                                  }
     );
     link(window.location.host + "/" + client.getId()); 
@@ -86,7 +83,6 @@ var RTCViewModel = function(client, path) {
   return {
     streams: availableStreams,
     isStreaming: isStreaming,
-    isPrivate: isPrivate,
     name: name,
     link: link,
     localCamButtonText: ko.computed(
@@ -119,8 +115,7 @@ var RTCViewModel = function(client, path) {
       stream.isPlaying(!stream.isPlaying());
     },
 
-    startPrivateCall: function(remoteId) {
-        isPrivate(true);
+    startDirectCall: function(remoteId) {
         getUserMedia(
                       mediaConfig, 
                       function (stream) {
