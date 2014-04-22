@@ -2,7 +2,6 @@
 var RTCStream = function(id, data) {
   this.id = id;
   this.name = ko.observable();
-  this.points = ko.observable();
   this.isPlaying = ko.observable(false);
 
   this.update(data);
@@ -11,7 +10,6 @@ var RTCStream = function(id, data) {
 ko.utils.extend(RTCStream.prototype, {
   update: function(data) {
     this.name(data.name);
-    this.points((data.votes === 0) ? 0 : data.rating/data.votes);
   }
 });
 
@@ -28,7 +26,6 @@ var RTCViewModel = function(client, path) {
       },
       availableStreams = ko.observable([]),
       isStreaming = ko.observable(false),
-      isPrivate = ko.observable(false),
       name = ko.observable('Guest'),
       link = ko.observable(),
       localVideoEl = document.getElementById('localVideo');
@@ -37,8 +34,7 @@ var RTCViewModel = function(client, path) {
   ko.computed(function() {
     if(isStreaming()) {
       client.send('update', {
-                              name: name(),
-                              privacy: isPrivate()
+                              name: name()
                             });
     }
   }).extend({throttle: 500});
@@ -47,8 +43,7 @@ var RTCViewModel = function(client, path) {
     attachMediaStream(localVideoEl, stream);
     client.setLocalStream(stream);
     client.send('readyToStream', {
-                                    name: name(),
-                                    privacy: isPrivate()
+                                    name: name()
                                  }
     );
     link(window.location.host + "/" + client.getId()); 
@@ -86,7 +81,6 @@ var RTCViewModel = function(client, path) {
   return {
     streams: availableStreams,
     isStreaming: isStreaming,
-    isPrivate: isPrivate,
     name: name,
     link: link,
     localCamButtonText: ko.computed(
@@ -96,12 +90,6 @@ var RTCViewModel = function(client, path) {
     ),
 
     refresh: loadStreamsFromServer,
-    rate: function(stream) {
-      client.send('rate', {
-        id: stream.id,
-        points: stream.points()
-      });
-    },
     toggleLocalVideo: function() {
       if(isStreaming()){
         client.send('leave');
@@ -119,8 +107,7 @@ var RTCViewModel = function(client, path) {
       stream.isPlaying(!stream.isPlaying());
     },
 
-    startPrivateCall: function(remoteId) {
-        isPrivate(true);
+    answerCall: function(remoteId) {
         getUserMedia(
                       mediaConfig, 
                       function (stream) {
@@ -133,35 +120,5 @@ var RTCViewModel = function(client, path) {
                       }
         );
     }
-  }
-};
-
-/**
-  * Star-rating binding taken from Knockoutjs tutorial on custom bindings
-  * http://learn.knockoutjs.com/#/?tutorial=custombindings
-  */
-ko.bindingHandlers.starRating = {
-  init: function(element, valueAccessor) {
-    $(element).addClass("starRating");
-    for (var i = 0; i < 5; i++)
-      $("<span>").appendTo(element);
-            
-    // Handle mouse events on the stars
-    $("span", element).each(function(index) {
-      $(this).hover(
-        function() { $(this).prevAll().add(this).addClass("hoverChosen") },
-        function() { $(this).prevAll().add(this).removeClass("hoverChosen") }                
-      ).click(function() {
-        var observable = valueAccessor();  // Get the associated observable
-        observable(index+1);               // Write the new rating to it
-      }); ;
-    });
-  },
-  update: function(element, valueAccessor) {
-    // Give the first x stars the "chosen" class, where x <= rating
-    var observable = valueAccessor();
-    $("span", element).each(function(index) {
-      $(this).toggleClass("chosen", index < observable());
-    });
   }
 };

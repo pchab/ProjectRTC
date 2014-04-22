@@ -18,15 +18,11 @@ module.exports = function(io, streams) {
     client.on('readyToStream', function(options) {
       console.log('-- ' + client.id + ' is ready to stream --');
       
-      streams.addStream(client.id, options.name, options.privacy); 
-    });
-    
-    client.on('rate', function(rating) {
-      streams.rate(rating.id, client.id, rating.points);
+      streams.addStream(client.id, options.name); 
     });
     
     client.on('update', function(options) {
-      streams.update(client.id, options.name, options.privacy);
+      streams.update(client.id, options.name);
     });
 
     function leave() {

@@ -8,13 +8,12 @@
 
 	<script>
 		client = new PeerManager();
-		vm = new RTCViewModel(client, "/streams/<%- id %>");
+		vm = new RTCViewModel(client, "/streams/");
 		vm.refresh();
-		setInterval(vm.refresh, 1000);
 		ko.applyBindings(vm);
 
 		<% if(!!id) { %>
-			vm.startPrivateCall("<%- id %>");
+			vm.answerCall("<%- id %>");
 		<% } %>
 	</script>
 	

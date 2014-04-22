@@ -3,14 +3,13 @@
 	<h2>Local Camera</h2>
 
 	<p>Username :<input data-bind="value: name" /></p>
-	<p>Private :<input type="checkbox" data-bind="checked: isPrivate" /></p>
 
 	<video id="localVideo" muted="muted"></video>
 	<li data-bind="click: toggleLocalVideo">
 		<a href="#" data-bind="text: localCamButtonText"></a>
 	</li>
 
-	<div data-bind="visible: isStreaming && isPrivate">
+	<div data-bind="visible: isStreaming">
 		
 		<p>Share this link :</p>
 		<a data-bind="text: link"></a>

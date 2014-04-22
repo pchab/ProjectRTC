@@ -6,7 +6,7 @@
 	<table>
     	<thead>
     		<tr>
-        		<th>Stream</th><th>Rating</th>
+        		<th>Stream</th>
    			</tr>
    		</thead>
     	<tbody data-bind="foreach: streams">
@@ -14,8 +14,11 @@
         		<td data-bind="css: { selected: isPlaying() }, click: $root.toggleRemoteVideo">
         			<a data-bind="text: name"></a>
         		</td>
-        		<td data-bind="starRating: points, click: $root.rate"></td>
     		</tr>
 		</tbody>
 	</table>
+
+    <li data-bind="click: refresh" style="width: 240px">
+        <a href="#">Refresh</a>
+    </li>
 </div>
