@@ -4,6 +4,7 @@
   "author": "Pierre Chabardes <pierre@chabardes.net>",
   "description": "a webRTC live streaming server",
   "scripts": {
+    "local-db": "mongod --dbpath ./data --port 1664",
     "start": "forever start app.js",
     "stop": "forever stopall"
   },
