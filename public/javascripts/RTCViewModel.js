@@ -107,11 +107,12 @@ var RTCViewModel = function(client, path) {
       stream.isPlaying(!stream.isPlaying());
     },
 
-    answerCall: function(remoteId) {
+    answerCall: function(stream) {
+        var remoteId = stream.id || stream;
         getUserMedia(
                       mediaConfig, 
-                      function (stream) {
-                        getReadyToStream(stream);
+                      function (strm) {
+                        getReadyToStream(strm);
                         client.pushStream(remoteId);
                         getStreamById(remoteId).isPlaying(true);
                       }, 
