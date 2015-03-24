@@ -30,6 +30,8 @@ var RTCViewModel = function(client, path) {
       link = ko.observable(),
       localVideoEl = document.getElementById('localVideo');
 
+  localVideoEl.autoplay = true;
+
   // push changes to server
   ko.computed(function() {
     if(isStreaming()) {

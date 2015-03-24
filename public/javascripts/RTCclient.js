@@ -10,7 +10,7 @@ var PeerManager = (function () {
         },
         peerConnectionConstraints: {
           optional: [
-                     {"DtlsSrtpKeyAgreement": (browser === 'firefox')}
+                     {"DtlsSrtpKeyAgreement": (webrtcDetectedBrowser === 'firefox')}
                     ]
         },
         mediaConstraints: {
@@ -70,9 +70,7 @@ var PeerManager = (function () {
         pc.setLocalDescription(sessionDescription);
         send('answer', remoteId, sessionDescription);
       }, 
-      function(error) { 
-        console.log(error);
-      },
+      error,
       config.mediaConstraints
     );
   }
@@ -83,9 +81,7 @@ var PeerManager = (function () {
         pc.setLocalDescription(sessionDescription);
         send('offer', remoteId, sessionDescription);
       }, 
-      function(error) { 
-        console.log(error);
-      },
+      error,
       config.mediaConstraints
     );
   }
@@ -102,11 +98,11 @@ var PeerManager = (function () {
         offer(from);
         break;
       case 'offer':
-        pc.setRemoteDescription(new RTCSessionDescription(message.payload));
+        pc.setRemoteDescription(new RTCSessionDescription(message.payload), function(){}, error);
         answer(from);
         break;
       case 'answer':
-        pc.setRemoteDescription(new RTCSessionDescription(message.payload));
+        pc.setRemoteDescription(new RTCSessionDescription(message.payload), function(){}, error);
         break;
       case 'candidate':
         if(pc.remoteDescription) {
@@ -132,6 +128,9 @@ var PeerManager = (function () {
     if(localStream) {
       (!!pc.getLocalStreams().length) ? pc.removeStream(localStream) : pc.addStream(localStream);
     }
+  }
+  function error(err){
+    console.log(err);
   }
 
   return {
@@ -177,4 +176,5 @@ var Peer = function (pcConfig, pcConstraints) {
   this.pc = new RTCPeerConnection(pcConfig, pcConstraints);
   this.remoteVideoEl = document.createElement('video');
   this.remoteVideoEl.controls = true;
+  this.remoteVideoEl.autoplay = true;
 }
