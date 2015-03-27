@@ -1,11 +1,11 @@
 module.exports = function(io, streams) {
 
-  io.sockets.on('connection', function(client) {
+  io.on('connection', function(client) {
     console.log('-- ' + client.id + ' joined --');
     client.emit('id', client.id);
 
     client.on('message', function (details) {
-      var otherClient = io.sockets.sockets[details.to];
+      var otherClient = io.sockets.connected[details.to];
 
       if (!otherClient) {
         return;

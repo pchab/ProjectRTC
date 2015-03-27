@@ -10,7 +10,7 @@ var PeerManager = (function () {
         },
         peerConnectionConstraints: {
           optional: [
-                     {"DtlsSrtpKeyAgreement": (webrtcDetectedBrowser === 'firefox')}
+                     {"DtlsSrtpKeyAgreement": true}
                     ]
         },
         mediaConstraints: {
@@ -23,10 +23,10 @@ var PeerManager = (function () {
       peerDatabase = {},
       localStream,
       remoteVideoContainer = document.getElementById('remoteVideosContainer'),
-      connection = io.connect(window.location.origin);
+      socket = io();
       
-  connection.on('message', handleMessage);
-  connection.on('id', function(id) {
+  socket.on('message', handleMessage);
+  socket.on('id', function(id) {
     localId = id;
   });
       
@@ -118,7 +118,7 @@ var PeerManager = (function () {
   function send(type, to, payload) {
     console.log('sending ' + type + ' to ' + to);
 
-    connection.emit('message', {
+    socket.emit('message', {
       to: to,
       type: type,
       payload: payload
@@ -160,7 +160,7 @@ var PeerManager = (function () {
     },
 
     send: function(type, payload) {
-      connection.emit(type, payload);
+      socket.emit(type, payload);
     }, 
 
     pushStream: function(remoteId) {
