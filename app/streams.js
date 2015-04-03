@@ -27,10 +27,12 @@ module.exports = function() {
     // update function
     update : function(id, name) {
       var stream = streamList[id];
-      stream.name = name;
-      
-      this.removeStream(id);     
-      streamList[id] = stream;
+      if(!!stream){
+        stream.name = name;
+        
+        this.removeStream(id);     
+        streamList[id] = stream;  
+      }
     },
 
     getStreams : function() {

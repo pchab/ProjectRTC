@@ -110,18 +110,18 @@ var RTCViewModel = function(client, path) {
     },
 
     answerCall: function(stream) {
-        var remoteId = stream.id || stream;
-        getUserMedia(
-                      mediaConfig, 
-                      function (strm) {
-                        getReadyToStream(strm);
-                        client.pushStream(remoteId);
-                        getStreamById(remoteId).isPlaying(true);
-                      }, 
-                      function () {
-                        throw new Error('Failed to get access to local media.');
-                      }
-        );
+      var remoteId = stream.id || stream;
+      getUserMedia(
+        mediaConfig, 
+        function (strm) {
+          getReadyToStream(strm);
+          client.pushStream(remoteId);
+          getStreamById(remoteId).isPlaying(true);
+        }, 
+        function () {
+          throw new Error('Failed to get access to local media.');
+        }
+      );
     }
   }
 };

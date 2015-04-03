@@ -4,20 +4,14 @@ var PeerManager = (function () {
       config = {
         peerConnectionConfig: {
           iceServers: [
-                        {"url": "stun:23.21.150.121"},
-                        {"url": "stun:stun.l.google.com:19302"}
-                      ]
+            {"url": "stun:23.21.150.121"},
+            {"url": "stun:stun.l.google.com:19302"}
+          ]
         },
         peerConnectionConstraints: {
           optional: [
-                     {"DtlsSrtpKeyAgreement": true}
-                    ]
-        },
-        mediaConstraints: {
-          'mandatory': {
-            'OfferToReceiveAudio': true,
-            'OfferToReceiveVideo': true
-          }
+            {"DtlsSrtpKeyAgreement": true}
+          ]
         }
       },
       peerDatabase = {},
@@ -70,8 +64,7 @@ var PeerManager = (function () {
         pc.setLocalDescription(sessionDescription);
         send('answer', remoteId, sessionDescription);
       }, 
-      error,
-      config.mediaConstraints
+      error
     );
   }
   function offer(remoteId) {
@@ -81,8 +74,7 @@ var PeerManager = (function () {
         pc.setLocalDescription(sessionDescription);
         send('offer', remoteId, sessionDescription);
       }, 
-      error,
-      config.mediaConstraints
+      error
     );
   }
   function handleMessage(message) {
@@ -110,7 +102,7 @@ var PeerManager = (function () {
             sdpMLineIndex: message.payload.label,
             sdpMid: message.payload.id,
             candidate: message.payload.candidate
-          }));
+          }), function(){}, error);
         }
         break;
     }
