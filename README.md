@@ -23,4 +23,4 @@ You can test it in the (Chrome) browser at localhost:3000.
 
 ## Author
 
-- Pierre Chabardes
+- [Pierre Chabardes](mailto:pierre@chabardes.net): Looking for a developper ? I'm looking for a job !
