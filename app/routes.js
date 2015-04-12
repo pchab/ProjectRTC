@@ -5,6 +5,8 @@ module.exports = function(app, streams) {
     res.render('index', { 
                           title: 'Project RTC', 
                           header: 'WebRTC live streaming',
+                          username: 'Username',
+                          share: 'Share this link',
                           footer: 'pierre@chabardes.net',
                           id: req.params.id
                         });
@@ -16,10 +18,10 @@ module.exports = function(app, streams) {
     // JSON exploit to clone streamList.public
     var data = (JSON.parse(JSON.stringify(streamList))); 
 
-    res.json(200, data);
+    res.status(200).json(data);
   };
 
-  app.get('/streams', displayStreams);
+  app.get('/streams.json', displayStreams);
   app.get('/', index);
   app.get('/:id', index);
 }

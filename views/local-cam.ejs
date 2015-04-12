@@ -1,0 +1,11 @@
+<div class="localStream" ng-controller="LocalStreamController as localStream">
+	<p><%= username %>: <input ng-model="localStream.name"/></p>
+	<video id="localVideo" muted="muted" autoplay="true"></video>
+	<li ng-click="localStream.toggleCam()">
+		<a href>{{ camera.isOn ? 'Stop' : 'Start' }}</a>
+	</li>
+	<div>		
+		<p><%= share %>:</p>
+		<a>{{ localStream.link }}</a>
+	</div>
+</div>

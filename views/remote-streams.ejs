@@ -1,0 +1,24 @@
+<div class="remoteStreams" ng-controller="RemoteStreamsController as rtc">
+	<h2>Remote Streams</h2>
+
+	<div id="remoteVideosContainer"></div>
+
+	<table>
+    	<thead>
+    		<tr>
+        		<th>Stream</th><th>1-way</th><th>2-way</th>
+   			</tr>
+   		</thead>
+    	<tbody>
+    		<tr ng-repeat="stream in rtc.remoteStreams">
+        		<td><a>{{stream.name}}</a></td>
+                <td ng-click="rtc.view(stream)"><a>View</a></td>
+                <td ng-click="rtc.call(stream)"><a>Call</a></td>
+    		</tr>
+		</tbody>
+	</table>
+
+	<li ng-click="rtc.loadData()" style="width: 240px">
+        <a href>Refresh</a>
+    </li>
+<div class="remoteStreams">
