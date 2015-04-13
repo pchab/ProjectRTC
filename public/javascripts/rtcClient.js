@@ -144,6 +144,11 @@ var PeerManager = (function () {
       }
 
       localStream = stream;
+    }, 
+
+    toggleLocalStream: function(remoteId) {
+      peer = peerDatabase[remoteId] || addPeer(remoteId);
+      toggleLocalStream(peer.pc);
     },
     
     peerInit: function(remoteId) {
@@ -151,14 +156,12 @@ var PeerManager = (function () {
       send('init', remoteId, null);
     },
 
+    peerRenegociate: function(remoteId) {
+      offer(remoteId);
+    },
+
     send: function(type, payload) {
       socket.emit(type, payload);
-    }, 
-
-    pushStream: function(remoteId) {
-      peer = peerDatabase[remoteId] || addPeer(remoteId);
-      toggleLocalStream(peer.pc);
-      send('init', remoteId, null);
     }
   };
   
