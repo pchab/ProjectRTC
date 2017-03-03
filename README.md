@@ -6,6 +6,10 @@
 - Desktop client
 - [Android client](https://github.com/pchab/AndroidRTC)
 
+You can also check this iOS client from Digix Technology:
+
+- [iOS client](https://github.com/digixtechnology/iOSRTC)
+
 The signaling part is done with [socket.io](socket.io).
 The client is built with [angularjs](https://angularjs.org/).
 
